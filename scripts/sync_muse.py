@@ -68,8 +68,8 @@ def load_feed():
             return f.read()
     url = os.environ.get("MUSE_FEED_URL", "").strip()
     if not url:
-        print("MUSE_FEED_URL is not set; nothing to do.")
-        sys.exit(0)
+        print("MUSE_FEED_URL is not set. Add it under Settings > Secrets and variables > Actions.")
+        sys.exit(1 if os.environ.get("GITHUB_ACTIONS") else 0)
     return fetch(url)
 
 
