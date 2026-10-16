@@ -26,5 +26,33 @@
   "scope": "/",
   "short_name": "LP's Podcast",
   "start_url": "/",
-  "theme_color": "#2174C4"
+  "theme_color": "#2174C4",
+  "shortcuts": [
+    {
+      "name": "Resume listening",
+      "short_name": "Resume",
+      "description": "Pick up where you left off",
+      "url": "/?action=resume",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Newest episode",
+      "short_name": "Newest",
+      "description": "Play the latest episode",
+      "url": "/?action=newest",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
 }

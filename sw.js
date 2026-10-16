@@ -1,4 +1,4 @@
-const CACHE = 'lps-podcast-v8';
+const CACHE = 'lps-podcast-v9';
 const CORE = ['/', '/index.html', '/manifest.json', '/icon-192.png', '/icon-512.png', '/icon-maskable-512.png', '/apple-touch-icon.png'];
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));
@@ -10,6 +10,10 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
   if (url.pathname.startsWith('/audio/')) return; // stream audio from network
   if (url.pathname === '/episodes.json') return; // always fetch the latest episode list
+  if (e.request.mode === 'navigate') { // shortcuts open /?action=..., serve the one cached page
+    e.respondWith(caches.match('/index.html').then((hit) => hit || fetch(e.request)));
+    return;
+  }
   e.respondWith(
     caches.match(e.request).then((hit) => hit || fetch(e.request).then((res) => {
       if (e.request.method === 'GET' && res.ok && url.origin === location.origin) {

@@ -188,7 +188,7 @@
     <div class="list" id="archivedList"></div>
   </details>
 
-  <footer>LP&rsquo;s Podcast v1.5 &middot; podcast.lpworx.com</footer>
+  <footer>LP&rsquo;s Podcast v1.6 &middot; podcast.lpworx.com</footer>
 </div>
 <div class="bar-mini" id="miniBar" aria-hidden="true">
   <span class="track" id="miniTrack"></span>
@@ -623,7 +623,25 @@ function restoreLast() {
   const [eps] = await Promise.all([loadFeed(), loadFiles()]);
   feed = (eps || []).map(toFeedItem);
   renderFeed(); renderMine(); restoreLast();
+  runShortcut();
 })();
+
+// Long-press app shortcuts: /?action=resume or /?action=newest
+function runShortcut() {
+  const action = new URLSearchParams(location.search).get("action");
+  if (!action) return;
+  history.replaceState(null, "", location.pathname);
+  let item = null;
+  if (action === "resume") {
+    const key = LS.get("lp-podcast-last", null);
+    item = key && findItem(key);
+    if (!item || prog(item.key).done) item = feed.find(x => !archivedUrls.includes(x.url) && !prog(x.key).done && prog(x.key).time > 0) || null;
+  }
+  if (action === "newest" || !item) item = feed.find(x => !archivedUrls.includes(x.url)) || null;
+  if (!item) return;
+  if (!current || current.key !== item.key) setCurrent(item, false);
+  audio.play().catch(() => { nowSub.textContent = "Ready. Press play to start."; });
+}
 </script>
 <script>
 if ('serviceWorker' in navigator) {
