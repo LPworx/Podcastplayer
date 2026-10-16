@@ -101,6 +101,7 @@
   .more svg { width:20px; height:20px; }
   .actions { display:flex; gap:8px; flex-wrap:wrap; padding:2px 14px 14px 58px; }
   .actions[hidden] { display:none; }
+  .actions .desc { flex-basis:100%; margin:0 0 4px; color:var(--muted); font-size:14px; line-height:1.5; max-width:62ch; }
   .actions button { border:1px solid var(--line); background:var(--bg); border-radius:999px; padding:6px 12px; font-size:13.5px; font-weight:600; }
   .empty { color:var(--muted); font-size:14px; padding:16px; margin:0; }
 
@@ -221,7 +222,7 @@
   </details>
 </div>
 
-  <footer>LP&rsquo;s Podcast v1.7 &middot; podcast.lpworx.com</footer>
+  <footer>LP&rsquo;s Podcast v1.8 &middot; podcast.lpworx.com</footer>
 </div>
 <div class="bar-mini" id="miniBar" aria-hidden="true">
   <span class="track" id="miniTrack"></span>
@@ -529,6 +530,9 @@ function row(item, extras) {
   const actions = document.createElement("div"); actions.className = "actions"; actions.hidden = true;
   more.addEventListener("click", () => { actions.hidden = !actions.hidden; more.setAttribute("aria-expanded", String(!actions.hidden)); });
 
+  if (item.description) {
+    const d = document.createElement("p"); d.className = "desc"; d.textContent = item.description; actions.append(d);
+  }
   const mark = document.createElement("button");
   mark.addEventListener("click", () => {
     setProg(item.key, { done: !prog(item.key).done, time: 0 });
@@ -553,7 +557,7 @@ function row(item, extras) {
 function showById(id) { return shows.find(x => x.id === id) || shows[0] || { id: "", name: "LP's Podcast" }; }
 function toFeedItem(ep) {
   const sh = showById(ep.show);
-  return { key: ep.url, title: ep.title, url: ep.url, date: ep.date, show: sh.id, secs: ep.secs || 0, source: "feed", downloadable: true,
+  return { key: ep.url, title: ep.title, url: ep.url, date: ep.date, show: sh.id, description: ep.description || "", secs: ep.secs || 0, source: "feed", downloadable: true,
            length: ep.secs ? mins(ep.secs) : "", sub: sh.name + ", " + dayLabel(ep.date) + (ep.secs ? ", " + mins(ep.secs) : ""),
            filename: slug(ep.title) + "." + extOf(ep.url) };
 }
