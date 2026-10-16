@@ -61,15 +61,21 @@
     <input class="scrub" id="scrub" type="range" min="0" max="0" value="0" step="1" aria-label="Seek" />
     <div class="times"><span id="cur">0:00</span><span id="dur">0:00</span></div>
     <div class="controls">
-      <button id="back15" title="Back 15 seconds">&minus;15s</button>
+      <button id="back15" title="Skip back">&minus;15s</button>
       <button class="primary" id="playBtn" disabled>Play</button>
-      <button id="fwd15" title="Forward 15 seconds">+15s</button>
+      <button id="fwd15" title="Skip forward">+15s</button>
       <select id="speed" aria-label="Playback speed">
         <option value="0.75">0.75&times;</option>
         <option value="1" selected>1&times;</option>
         <option value="1.25">1.25&times;</option>
         <option value="1.5">1.5&times;</option>
         <option value="2">2&times;</option>
+      </select>
+      <select id="skipAmt" aria-label="Skip amount">
+        <option value="10">Skip 10s</option>
+        <option value="15" selected>Skip 15s</option>
+        <option value="30">Skip 30s</option>
+        <option value="60">Skip 60s</option>
       </select>
       <button id="dlBtn" disabled>Download</button>
     </div>
@@ -121,6 +127,15 @@ const nowSub = document.getElementById("nowSub");
 let mine = []; // { title, url, source: 'file'|'url', downloadable }
 let current = null; // { title, url, meta, downloadable, el }
 
+let skipSecs = 15;
+try { const saved = parseInt(localStorage.getItem("lp-podcast-skip"), 10); if ([10, 15, 30, 60].includes(saved)) skipSecs = saved; } catch (e) { /* private mode etc. */ }
+function applySkipLabels() {
+  document.getElementById("back15").textContent = "\u2212" + skipSecs + "s";
+  document.getElementById("fwd15").textContent = "+" + skipSecs + "s";
+  const sel = document.getElementById("skipAmt");
+  if (sel) sel.value = String(skipSecs);
+}
+
 function fmt(s) {
   if (!isFinite(s) || s < 0) s = 0;
   s = Math.floor(s);
@@ -160,10 +175,10 @@ function skipBy(sec) {
 if ("mediaSession" in navigator) {
   navigator.mediaSession.setActionHandler("play", () => { if (current) { audio.play(); playBtn.textContent = "Pause"; } });
   navigator.mediaSession.setActionHandler("pause", () => { audio.pause(); playBtn.textContent = "Play"; });
-  navigator.mediaSession.setActionHandler("seekbackward", (d) => skipBy(-((d && d.seekOffset) || 15)));
-  navigator.mediaSession.setActionHandler("seekforward", (d) => skipBy(((d && d.seekOffset) || 15)));
-  navigator.mediaSession.setActionHandler("previoustrack", () => skipBy(-30));
-  navigator.mediaSession.setActionHandler("nexttrack", () => skipBy(30));
+  navigator.mediaSession.setActionHandler("seekbackward", (d) => skipBy(-((d && d.seekOffset) || skipSecs)));
+  navigator.mediaSession.setActionHandler("seekforward", (d) => skipBy(((d && d.seekOffset) || skipSecs)));
+  navigator.mediaSession.setActionHandler("previoustrack", () => skipBy(-skipSecs));
+  navigator.mediaSession.setActionHandler("nexttrack", () => skipBy(skipSecs));
 }
 audio.addEventListener("play", () => { if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "playing"; });
 audio.addEventListener("pause", () => { if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "paused"; });
@@ -175,8 +190,14 @@ playBtn.addEventListener("click", () => {
   if (audio.paused) { audio.play(); playBtn.textContent = "Pause"; }
   else { audio.pause(); playBtn.textContent = "Play"; }
 });
-document.getElementById("back15").addEventListener("click", () => { audio.currentTime = Math.max(0, audio.currentTime - 15); });
-document.getElementById("fwd15").addEventListener("click", () => { audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 15); });
+document.getElementById("back15").addEventListener("click", () => { audio.currentTime = Math.max(0, audio.currentTime - skipSecs); });
+document.getElementById("fwd15").addEventListener("click", () => { audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + skipSecs); });
+document.getElementById("skipAmt").addEventListener("change", (e) => {
+  skipSecs = parseInt(e.target.value, 10) || 15;
+  try { localStorage.setItem("lp-podcast-skip", String(skipSecs)); } catch (e) { /* private mode etc. */ }
+  applySkipLabels();
+});
+applySkipLabels();
 document.getElementById("speed").addEventListener("change", e => { audio.playbackRate = parseFloat(e.target.value); });
 dlBtn.addEventListener("click", () => {
   if (!current || !current.downloadable) return;
