@@ -27,13 +27,18 @@
   button { border:1px solid var(--line); background:var(--chip); color:var(--fg); border-radius:999px; padding:8px 14px; cursor:pointer; }
   button.primary { background:var(--blue); border-color:var(--blue); color:#fff; font-weight:700; }
   button:disabled { opacity:.5; cursor:default; }
+  button.link { border:0; background:none; padding:0; color:var(--blue); font-size:13px; border-radius:0; }
   select { border:1px solid var(--line); background:var(--chip); color:var(--fg); border-radius:8px; padding:7px 8px; }
   h2 { font-size:18px; margin:24px 0 8px; }
   .ep { display:flex; gap:10px; padding:12px 0; border-bottom:1px solid var(--line); align-items:flex-start; }
   .ep.playing { background:var(--chip); border-radius:8px; padding-left:8px; padding-right:8px; }
+  .ep.played .ep-title { color:var(--muted); font-weight:500; }
   .ep-info { flex:1; min-width:0; }
   .ep-title { font-weight:600; }
   .ep-meta { color:var(--muted); font-size:13px; margin-top:2px; }
+  .ep-meta .link { margin-left:8px; }
+  .bar { height:4px; background:var(--line); border-radius:999px; margin-top:6px; overflow:hidden; }
+  .bar > div { height:100%; width:0; background:var(--blue); }
   .ep-actions { display:flex; gap:6px; flex-shrink:0; }
   .ep-actions button { padding:6px 10px; font-size:13px; }
   .add-box { border:1px dashed var(--line); border-radius:12px; padding:14px; margin-top:8px; }
@@ -82,7 +87,7 @@
     <audio id="audio" preload="metadata"></audio>
   </section>
 
-  <h2>Your audio <span class="badge">NEW</span></h2>
+  <h2>Your audio</h2>
   <div class="add-box">
     <label for="fileInput">Add audio files from your device</label>
     <input id="fileInput" type="file" accept="audio/*" multiple />
@@ -90,36 +95,78 @@
       <input id="urlInput" type="text" placeholder="Or paste an MP3 / audio URL" />
       <button id="addUrlBtn">Add URL</button>
     </div>
-    <p class="note">Files play locally in this browser and are forgotten when you leave the page. URLs you add are remembered in this browser.</p>
+    <p class="note" id="storageNote">Files you add are saved in this browser on this device and stay until you remove them. Nothing is uploaded.</p>
   </div>
   <div id="mineList"></div>
 
   <h2>LP&rsquo;s Podcast episodes</h2>
-  <div id="feedList"></div>
+  <div id="feedList"><p class="note">Loading episodes&hellip;</p></div>
 
   <div id="archivedSection" style="display:none">
     <h2>Archived episodes</h2>
     <div id="archivedList"></div>
   </div>
 
-  <footer>LP&rsquo;s Podcast &middot; v1.3 &middot; podcast.lpworx.com</footer>
+  <footer>LP&rsquo;s Podcast &middot; v1.4 &middot; podcast.lpworx.com</footer>
 </main>
 <script>
-const EPISODES = [
-  { title: "Tech Briefing October 15: Original Audio", date: "2026-10-15", secs: 510, url: "audio/tech-briefing-october-15-original-audio.ogg" },
-  { title: "Tech Briefing October 15: Specs, Scion, Lawsuits, Apertus, TSMC, and AI Music Labels", date: "2026-10-15", secs: 498, url: "audio/tech-briefing-october-15-specs-scion-lawsuits-apertus-tsmc-and-ai-music-labels-2026-10-15.mp3" },
-  { title: "Build It, Sell It: Cool Things to Make with AI and How They Pay", date: "2026-10-15", secs: 569, url: "audio/build-it-sell-it-cool-things-to-make-with-ai-and-how-they-pay-2026-10-15.mp3" },
-  { title: "Beyond the Chatbox: Dashboards, Decisions, and the Thousand-Agent Test", date: "2026-10-14", secs: 694, url: "audio/beyond-the-chatbox-dashboards-decisions-and-the-thousand-agent-test-2026-10-14.mp3" },
-  { title: "Your Own Private AI: The Local Model Playbook", date: "2026-10-12", secs: 648, url: "audio/your-own-private-ai-the-local-model-playbook-2026-10-12.mp3" },
-  { title: "The Real AI Fears: What's Actually Scary Right Now", date: "2026-10-11", secs: 540, url: "audio/the-real-ai-fears-whats-actually-scary-right-now-2026-10-11.mp3" },
-  { title: "Welcome to LP's Podcast", date: "2026-10-09", secs: 24, url: "audio/welcome-to-lps-podcast-2026-10-09.mp3" },
-  { title: "Claude's Big Week: Haiku 5.5, Cheaper Caching, and the Agent Swarm", date: "2026-10-09", secs: 810, url: "audio/claudes-big-week-haiku-55-cheaper-caching-and-the-agent-swarm-2026-10-09.mp3" },
-  { title: "Meet Muse: What Your Personal AI Agent Can Actually Do", date: "2026-10-09", secs: 573, url: "audio/meet-muse-what-your-personal-ai-agent-can-actually-do-2026-10-09.mp3" },
-  { title: "The Pleasant Place", date: "2026-10-09", secs: 605, url: "audio/the-pleasant-place-2026-10-09-0e5647cb.mp3" },
-  { title: "How Computers Work", date: "2026-10-09", secs: 1107, url: "audio/how-computers-work-2026-10-09-24cf859b.mp3" },
-  { title: "Always-On Agents: Running Your Own Agent Team", date: "2026-10-09", secs: 704, url: "audio/always-on-agents-running-your-own-agent-team-2026-10-09.mp3" },
-];
+// ---------- Storage helpers ----------
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode etc. */ } },
+  del(k) { try { localStorage.removeItem(k); } catch (e) { /* private mode etc. */ } }
+};
 
+// IndexedDB for audio files added from the device.
+const DB_NAME = "lp-podcast", STORE = "files";
+let dbPromise = null;
+function db() {
+  if (!dbPromise) {
+    dbPromise = new Promise((resolve, reject) => {
+      if (!("indexedDB" in window)) { reject(new Error("no indexedDB")); return; }
+      const req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = () => req.result.createObjectStore(STORE, { keyPath: "id" });
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+  return dbPromise;
+}
+function idbTx(mode, fn) {
+  return db().then(d => new Promise((resolve, reject) => {
+    const tx = d.transaction(STORE, mode);
+    const store = tx.objectStore(STORE);
+    const out = fn(store);
+    tx.oncomplete = () => resolve(out && "result" in out ? out.result : undefined);
+    tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(tx.error);
+  }));
+}
+const idbAll = () => idbTx("readonly", s => s.getAll());
+const idbPut = rec => idbTx("readwrite", s => s.put(rec));
+const idbDel = id => idbTx("readwrite", s => s.delete(id));
+
+// ---------- Per-episode progress ----------
+// progress[key] = { time, dur, done }
+let progress = LS.get("lp-podcast-progress", {});
+if (!progress || typeof progress !== "object") progress = {};
+// Migrate v1.3's single saved spot.
+const oldPos = LS.get("lp-podcast-position", null);
+if (oldPos && oldPos.url && !String(oldPos.url).startsWith("blob:")) {
+  if (!progress[oldPos.url]) progress[oldPos.url] = { time: oldPos.time || 0 };
+  if (!LS.get("lp-podcast-last", null)) LS.set("lp-podcast-last", oldPos.url);
+  LS.set("lp-podcast-progress", progress);
+}
+LS.del("lp-podcast-position");
+
+function prog(key) { return progress[key] || {}; }
+function setProg(key, patch) {
+  progress[key] = Object.assign({}, progress[key], patch);
+  LS.set("lp-podcast-progress", progress);
+}
+function clearProg(key) { delete progress[key]; LS.set("lp-podcast-progress", progress); }
+
+// ---------- Elements & state ----------
 const audio = document.getElementById("audio");
 const playBtn = document.getElementById("playBtn");
 const dlBtn = document.getElementById("dlBtn");
@@ -129,55 +176,69 @@ const durEl = document.getElementById("dur");
 const nowTitle = document.getElementById("nowTitle");
 const nowSub = document.getElementById("nowSub");
 
-let mine = []; // { title, url, source: 'file'|'url', downloadable }
-let current = null; // { title, url, meta, downloadable, el }
-
-// Remember spot: save episode + timestamp, restore on next visit.
-let savedPos = null;
-try { savedPos = JSON.parse(localStorage.getItem("lp-podcast-position") || "null"); } catch (e) { savedPos = null; }
-let lastSavedAt = 0;
-function savePos() {
-  if (!current || !isFinite(audio.currentTime) || audio.currentTime < 1) return;
-  if (audio.duration && audio.currentTime > audio.duration - 5) return; // finished, don't save the tail
-  try { localStorage.setItem("lp-podcast-position", JSON.stringify({ url: current.url, title: current.title, meta: current.meta || "", time: audio.currentTime })); } catch (e) { /* private mode etc. */ }
-}
-
-// Archive: hide finished episodes from the main list, keep them recoverable.
-let archivedUrls = [];
-try { archivedUrls = JSON.parse(localStorage.getItem("lp-podcast-archived") || "[]"); } catch (e) { archivedUrls = []; }
-function saveArchived() { try { localStorage.setItem("lp-podcast-archived", JSON.stringify(archivedUrls)); } catch (e) { /* private mode etc. */ } }
+let feed = [];   // items from episodes.json
+let mine = [];   // items the user added: source 'url' | 'file'
+let current = null;
+let pendingSeek = 0;
+let lastSavedAt = 0, lastPainted = -1;
+const rowRefs = new Map(); // key -> refs for live updates
+let archivedUrls = LS.get("lp-podcast-archived", []);
+if (!Array.isArray(archivedUrls)) archivedUrls = [];
+let filesSupported = true;
 
 let skipSecs = 15;
 try { const saved = parseInt(localStorage.getItem("lp-podcast-skip"), 10); if ([10, 15, 30, 60].includes(saved)) skipSecs = saved; } catch (e) { /* private mode etc. */ }
 function applySkipLabels() {
   document.getElementById("back15").textContent = "\u2212" + skipSecs + "s";
   document.getElementById("fwd15").textContent = "+" + skipSecs + "s";
-  const sel = document.getElementById("skipAmt");
-  if (sel) sel.value = String(skipSecs);
+  document.getElementById("skipAmt").value = String(skipSecs);
 }
 
 function fmt(s) {
   if (!isFinite(s) || s < 0) s = 0;
   s = Math.floor(s);
-  const m = Math.floor(s / 60), r = s % 60;
-  return m + ":" + String(r).padStart(2, "0");
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), r = s % 60;
+  return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(r).padStart(2, "0");
 }
+function slug(t) { return t.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "audio"; }
+function extOf(url) { const m = String(url).split(/[?#]/)[0].match(/\.([a-z0-9]{2,4})$/i); return m ? m[1].toLowerCase() : "mp3"; }
 
-function setCurrent(item, el) {
+// ---------- Player ----------
+function setCurrent(item, autoplay) {
+  if (current && current.key !== item.key) savePos();
+  const prevKey = current && current.key;
   current = item;
-  document.querySelectorAll(".ep.playing").forEach(n => n.classList.remove("playing"));
-  if (el) el.classList.add("playing");
+  const p = prog(item.key);
+  pendingSeek = (!p.done && p.time > 0) ? p.time : 0;
+  const rate = parseFloat(document.getElementById("speed").value);
+  audio.defaultPlaybackRate = rate;
   audio.src = item.url;
-  audio.playbackRate = parseFloat(document.getElementById("speed").value);
+  audio.playbackRate = rate;
   nowTitle.textContent = item.title;
   nowSub.textContent = item.meta || "";
-  updateMediaSession();
   playBtn.disabled = false;
   dlBtn.disabled = !item.downloadable;
-  audio.play().then(() => { playBtn.textContent = "Pause"; }).catch(() => { playBtn.textContent = "Play"; });
+  LS.set("lp-podcast-last", item.key);
+  updateMediaSession();
+  if (prevKey) paintRow(prevKey);
+  paintRow(item.key);
+  if (autoplay) audio.play().catch(() => {});
 }
 
-// Media Session: expose the player to watch / Bluetooth / lock-screen controls.
+function savePos() {
+  if (!current) return;
+  const t = audio.currentTime, d = audio.duration;
+  if (!isFinite(t)) return;
+  if (isFinite(d) && d > 0 && d - t < 5) {
+    setProg(current.key, { time: 0, dur: d, done: true });
+  } else if (t >= 1) {
+    setProg(current.key, { time: t, dur: isFinite(d) ? d : prog(current.key).dur, done: false });
+  } else {
+    return;
+  }
+  paintRow(current.key);
+}
+
 function updateMediaSession() {
   if (!("mediaSession" in navigator)) return;
   if (!current) { navigator.mediaSession.metadata = null; return; }
@@ -192,79 +253,136 @@ function skipBy(sec) {
   if (!current) return;
   audio.currentTime = Math.max(0, Math.min(audio.duration || 0, audio.currentTime + sec));
 }
+function togglePlay() {
+  if (!current) return;
+  if (audio.paused) audio.play().catch(() => {}); else audio.pause();
+}
 if ("mediaSession" in navigator) {
-  navigator.mediaSession.setActionHandler("play", () => { if (current) { audio.play(); playBtn.textContent = "Pause"; } });
-  navigator.mediaSession.setActionHandler("pause", () => { audio.pause(); playBtn.textContent = "Play"; });
+  navigator.mediaSession.setActionHandler("play", () => { if (current) audio.play().catch(() => {}); });
+  navigator.mediaSession.setActionHandler("pause", () => audio.pause());
   navigator.mediaSession.setActionHandler("seekbackward", (d) => skipBy(-((d && d.seekOffset) || skipSecs)));
   navigator.mediaSession.setActionHandler("seekforward", (d) => skipBy(((d && d.seekOffset) || skipSecs)));
   navigator.mediaSession.setActionHandler("previoustrack", () => skipBy(-skipSecs));
   navigator.mediaSession.setActionHandler("nexttrack", () => skipBy(skipSecs));
 }
-audio.addEventListener("play", () => { if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "playing"; });
-audio.addEventListener("pause", () => { if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "paused"; });
-audio.addEventListener("ended", () => { if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "none"; });
 
-
-playBtn.addEventListener("click", () => {
-  if (!current) return;
-  if (audio.paused) { audio.play(); playBtn.textContent = "Pause"; }
-  else { audio.pause(); playBtn.textContent = "Play"; }
+audio.addEventListener("play", () => {
+  playBtn.textContent = "Pause";
+  if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "playing";
+  if (current) { nowSub.textContent = current.meta || ""; paintRow(current.key); }
 });
-document.getElementById("back15").addEventListener("click", () => { audio.currentTime = Math.max(0, audio.currentTime - skipSecs); });
-document.getElementById("fwd15").addEventListener("click", () => { audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + skipSecs); });
-document.getElementById("skipAmt").addEventListener("change", (e) => {
-  skipSecs = parseInt(e.target.value, 10) || 15;
-  try { localStorage.setItem("lp-podcast-skip", String(skipSecs)); } catch (e) { /* private mode etc. */ }
-  applySkipLabels();
+audio.addEventListener("pause", () => {
+  playBtn.textContent = "Play";
+  if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "paused";
+  savePos();
+  if (current) paintRow(current.key);
 });
-applySkipLabels();
-document.getElementById("speed").addEventListener("change", e => { audio.playbackRate = parseFloat(e.target.value); });
-dlBtn.addEventListener("click", () => {
-  if (!current || !current.downloadable) return;
-  const a = document.createElement("a");
-  a.href = current.url;
-  a.download = current.title.replace(/[^a-z0-9]+/gi, "-").toLowerCase() + ".mp3";
-  document.body.appendChild(a); a.click(); a.remove();
+audio.addEventListener("ended", () => {
+  playBtn.textContent = "Play";
+  if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "none";
+  if (current) { setProg(current.key, { time: 0, dur: audio.duration, done: true }); paintRow(current.key); }
+});
+audio.addEventListener("loadedmetadata", () => {
+  durEl.textContent = fmt(audio.duration);
+  if (isFinite(audio.duration)) {
+    scrub.max = Math.floor(audio.duration);
+    if (current && !prog(current.key).dur) setProg(current.key, { dur: audio.duration });
+    if (pendingSeek > 0 && pendingSeek < audio.duration - 5) audio.currentTime = pendingSeek;
+  }
+  pendingSeek = 0;
 });
 audio.addEventListener("timeupdate", () => {
   if (isFinite(audio.duration)) { scrub.max = Math.floor(audio.duration); scrub.value = Math.floor(audio.currentTime); }
   curEl.textContent = fmt(audio.currentTime);
   if (Math.abs(audio.currentTime - lastSavedAt) > 5) { lastSavedAt = audio.currentTime; savePos(); }
+  const sec = Math.floor(audio.currentTime);
+  if (current && sec !== lastPainted) { lastPainted = sec; paintRow(current.key); }
 });
-audio.addEventListener("pause", () => { savePos(); });
+audio.addEventListener("error", () => { if (current) nowSub.textContent = "Couldn't play this one. The file may be gone or the host may block direct playback."; });
 window.addEventListener("pagehide", savePos);
-audio.addEventListener("ended", () => { try { localStorage.removeItem("lp-podcast-position"); } catch (e) { /* private mode etc. */ } });
-audio.addEventListener("loadedmetadata", () => {
-  durEl.textContent = fmt(audio.duration);
-  if (isFinite(audio.duration)) scrub.max = Math.floor(audio.duration);
-});
-audio.addEventListener("ended", () => { playBtn.textContent = "Play"; });
-audio.addEventListener("error", () => { nowSub.textContent = "Couldn't play this one. The file may be gone or the host may block direct playback."; });
-scrub.addEventListener("input", () => { audio.currentTime = parseFloat(scrub.value); });
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") savePos(); });
 
-function row(item, removable, onRemove, extra) {
+playBtn.addEventListener("click", togglePlay);
+document.getElementById("back15").addEventListener("click", () => skipBy(-skipSecs));
+document.getElementById("fwd15").addEventListener("click", () => skipBy(skipSecs));
+document.getElementById("skipAmt").addEventListener("change", (e) => {
+  skipSecs = parseInt(e.target.value, 10) || 15;
+  try { localStorage.setItem("lp-podcast-skip", String(skipSecs)); } catch (err) { /* private mode etc. */ }
+  applySkipLabels();
+});
+applySkipLabels();
+document.getElementById("speed").addEventListener("change", e => {
+  const r = parseFloat(e.target.value);
+  audio.defaultPlaybackRate = r; audio.playbackRate = r;
+});
+scrub.addEventListener("input", () => { audio.currentTime = parseFloat(scrub.value); });
+dlBtn.addEventListener("click", () => {
+  if (!current || !current.downloadable) return;
+  const a = document.createElement("a");
+  a.href = current.url;
+  a.download = current.filename || (slug(current.title) + "." + extOf(current.url));
+  document.body.appendChild(a); a.click(); a.remove();
+});
+
+// ---------- Rows ----------
+function liveTime(key) {
+  if (current && current.key === key && isFinite(audio.currentTime) && audio.currentTime > 0) return audio.currentTime;
+  return prog(key).time || 0;
+}
+function paintRow(key) {
+  const r = rowRefs.get(key);
+  if (!r) return;
+  const p = prog(key);
+  const total = r.item.secs || p.dur || (current && current.key === key && isFinite(audio.duration) ? audio.duration : 0);
+  const t = liveTime(key);
+  const done = !!p.done && !(current && current.key === key && !audio.paused);
+  const inProg = !done && t >= 1 && total > 0;
+  let status = "";
+  if (done) status = "\u2713 Played";
+  else if (inProg) status = fmt(Math.max(0, total - t)) + " left";
+  r.metaText.textContent = (r.item.meta || "") + (status ? (r.item.meta ? " \u00b7 " : "") + status : "");
+  r.barWrap.hidden = !inProg;
+  if (inProg) r.bar.style.width = Math.min(100, (t / total) * 100) + "%";
+  r.mark.textContent = done ? "Mark unplayed" : "Mark played";
+  const isCur = !!current && current.key === key;
+  r.play.textContent = (isCur && !audio.paused) ? "Pause" : (inProg ? "Resume" : "Play");
+  r.el.classList.toggle("played", done);
+  r.el.classList.toggle("playing", isCur);
+}
+
+function row(item, extra) {
   const div = document.createElement("div");
   div.className = "ep";
-  div.dataset.url = item.url;
   const info = document.createElement("div");
   info.className = "ep-info";
   const t = document.createElement("div");
   t.className = "ep-title"; t.textContent = item.title;
   const m = document.createElement("div");
-  m.className = "ep-meta"; m.textContent = item.meta || "";
-  info.append(t, m);
+  m.className = "ep-meta";
+  const metaText = document.createElement("span");
+  const mark = document.createElement("button");
+  mark.className = "link";
+  mark.addEventListener("click", () => {
+    if (prog(item.key).done) setProg(item.key, { done: false, time: 0 });
+    else setProg(item.key, { done: true, time: 0 });
+    if (current && current.key === item.key) pendingSeek = 0;
+    paintRow(item.key);
+  });
+  m.append(metaText, mark);
+  const barWrap = document.createElement("div");
+  barWrap.className = "bar"; barWrap.hidden = true;
+  const bar = document.createElement("div");
+  barWrap.append(bar);
+  info.append(t, m, barWrap);
+
   const actions = document.createElement("div");
   actions.className = "ep-actions";
   const play = document.createElement("button");
-  play.textContent = "Play";
-  play.addEventListener("click", () => setCurrent(item, div));
+  play.addEventListener("click", () => {
+    if (current && current.key === item.key) togglePlay();
+    else setCurrent(item, true);
+  });
   actions.append(play);
-  if (removable) {
-    const rm = document.createElement("button");
-    rm.textContent = "Remove";
-    rm.addEventListener("click", onRemove);
-    actions.append(rm);
-  }
   if (extra) {
     const xb = document.createElement("button");
     xb.textContent = extra.label;
@@ -272,106 +390,158 @@ function row(item, removable, onRemove, extra) {
     actions.append(xb);
   }
   div.append(info, actions);
+  rowRefs.set(item.key, { item, el: div, metaText, mark, barWrap, bar, play });
+  paintRow(item.key);
   return div;
 }
 
+// ---------- Feed (episodes.json) ----------
+function toFeedItem(ep) {
+  return {
+    key: ep.url, title: ep.title, url: ep.url, secs: ep.secs || 0, source: "feed", downloadable: true,
+    meta: ep.date + (ep.secs ? " \u00b7 " + fmt(ep.secs) : ""),
+    filename: slug(ep.title) + "." + extOf(ep.url)
+  };
+}
+async function loadFeed() {
+  try {
+    const res = await fetch("episodes.json", { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    const eps = (Array.isArray(data) ? data : data.episodes || []).filter(e => e && e.title && e.url);
+    LS.set("lp-podcast-feed-cache", eps);
+    return eps;
+  } catch (e) {
+    const cached = LS.get("lp-podcast-feed-cache", null);
+    return Array.isArray(cached) ? cached : null;
+  }
+}
 function renderFeed() {
   const list = document.getElementById("feedList");
   const arch = document.getElementById("archivedList");
   const archSection = document.getElementById("archivedSection");
-  list.innerHTML = "";
-  arch.innerHTML = "";
+  list.innerHTML = ""; arch.innerHTML = "";
+  if (!feed.length) {
+    const p = document.createElement("p"); p.className = "note";
+    p.textContent = "Couldn't load episodes. Check your connection and reload.";
+    list.appendChild(p);
+  }
   let archCount = 0;
-  EPISODES.forEach(ep => {
-    const item = { title: ep.title, url: ep.url, meta: ep.date + " · " + fmt(ep.secs), downloadable: true };
-    if (archivedUrls.includes(ep.url)) {
+  feed.forEach(item => {
+    if (archivedUrls.includes(item.url)) {
       archCount++;
-      arch.appendChild(row(item, false, null, { label: "Unarchive", onClick: () => { archivedUrls = archivedUrls.filter(u => u !== ep.url); saveArchived(); renderFeed(); } }));
+      arch.appendChild(row(item, { label: "Unarchive", onClick: () => { archivedUrls = archivedUrls.filter(u => u !== item.url); LS.set("lp-podcast-archived", archivedUrls); renderFeed(); } }));
     } else {
-      list.appendChild(row(item, false, null, { label: "Archive", onClick: () => { archivedUrls.push(ep.url); saveArchived(); renderFeed(); } }));
+      list.appendChild(row(item, { label: "Archive", onClick: () => { archivedUrls.push(item.url); LS.set("lp-podcast-archived", archivedUrls); renderFeed(); } }));
     }
   });
   archSection.style.display = archCount ? "" : "none";
 }
 
+// ---------- Your audio ----------
 function saveUrls() {
-  try {
-    const urls = mine.filter(x => x.source === "url").map(x => ({ title: x.title, url: x.url }));
-    localStorage.setItem("lp-podcast-urls", JSON.stringify(urls));
-  } catch (e) { /* private mode etc. */ }
+  LS.set("lp-podcast-urls", mine.filter(x => x.source === "url").map(x => ({ title: x.title, url: x.url })));
 }
 function loadUrls() {
+  const list = LS.get("lp-podcast-urls", []);
+  if (!Array.isArray(list)) return;
+  list.forEach(x => { if (x && x.url) mine.push(urlItem(x.title || x.url, x.url)); });
+}
+function urlItem(title, url) {
+  return { key: url, title, url, source: "url", downloadable: true, meta: "Added by URL", filename: slug(title) + "." + extOf(url) };
+}
+function fileItem(rec, saved) {
+  return {
+    key: "file:" + rec.id, id: rec.id, title: rec.title, url: URL.createObjectURL(rec.blob), source: "file",
+    downloadable: true, filename: rec.name,
+    meta: (saved ? "Saved on this device" : "This visit only") + " \u00b7 " + rec.name
+  };
+}
+async function loadFiles() {
   try {
-    const raw = localStorage.getItem("lp-podcast-urls");
-    if (!raw) return;
-    JSON.parse(raw).forEach(x => {
-      mine.push({ title: x.title, url: x.url, source: "url", downloadable: true, meta: "Added by URL" });
-    });
-  } catch (e) { /* ignore bad data */ }
+    const recs = await idbAll();
+    (recs || []).sort((a, b) => (a.added || 0) - (b.added || 0)).forEach(rec => { if (rec && rec.blob) mine.push(fileItem(rec, true)); });
+  } catch (e) {
+    filesSupported = false;
+    document.getElementById("storageNote").textContent = "This browser can't save files, so ones you add play locally and are forgotten when you leave. Nothing is uploaded.";
+  }
+}
+function removeMine(item) {
+  if (item.source === "file") {
+    URL.revokeObjectURL(item.url);
+    if (filesSupported) idbDel(item.id).catch(() => {});
+  }
+  if (current && current.key === item.key) {
+    audio.pause(); audio.removeAttribute("src"); audio.load();
+    current = null; playBtn.disabled = true; dlBtn.disabled = true;
+    nowTitle.textContent = "Pick an episode below"; nowSub.textContent = "";
+    curEl.textContent = "0:00"; durEl.textContent = "0:00"; scrub.value = 0;
+    LS.del("lp-podcast-last"); updateMediaSession();
+  }
+  clearProg(item.key);
+  mine = mine.filter(x => x !== item);
+  rowRefs.delete(item.key);
+  saveUrls();
+  renderMine();
 }
 function renderMine() {
   const list = document.getElementById("mineList");
   list.innerHTML = "";
   if (mine.length === 0) {
-    const p = document.createElement("p");
-    p.className = "note";
+    const p = document.createElement("p"); p.className = "note";
     p.textContent = "Nothing added yet.";
     list.appendChild(p);
     return;
   }
-  mine.forEach((item, idx) => {
-    list.appendChild(row(item, true, () => {
-      if (item.source === "file") URL.revokeObjectURL(item.url);
-      mine.splice(idx, 1);
-      saveUrls();
-      renderMine();
-    }));
-  });
+  mine.forEach(item => list.appendChild(row(item, { label: "Remove", onClick: () => removeMine(item) })));
 }
 
-document.getElementById("fileInput").addEventListener("change", e => {
-  [...e.target.files].forEach(f => {
-    mine.push({ title: f.name.replace(/\.[^.]+$/, ""), url: URL.createObjectURL(f), source: "file", downloadable: false, meta: "From this device · " + f.name });
-  });
+document.getElementById("fileInput").addEventListener("change", async e => {
+  const files = [...e.target.files];
   e.target.value = "";
+  if (files.length && filesSupported && navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+  for (const f of files) {
+    const rec = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8), title: f.name.replace(/\.[^.]+$/, ""), name: f.name, type: f.type, blob: f, added: Date.now() };
+    let saved = false;
+    if (filesSupported) { try { await idbPut(rec); saved = true; } catch (err) { saved = false; } }
+    mine.push(fileItem(rec, saved));
+  }
   renderMine();
 });
 document.getElementById("addUrlBtn").addEventListener("click", () => {
   const input = document.getElementById("urlInput");
   const url = input.value.trim();
   if (!url) return;
+  if (mine.some(x => x.url === url)) { input.value = ""; return; }
   let title = url;
-  try { title = decodeURIComponent(new URL(url).pathname.split("/").pop() || url).replace(/[-_]/g, " ").replace(/\.mp3$/i, "") || url; } catch (e) { /* keep raw */ }
-  mine.push({ title, url, source: "url", downloadable: true, meta: "Added by URL" });
+  try { title = decodeURIComponent(new URL(url).pathname.split("/").pop() || url).replace(/[-_]/g, " ").replace(/\.(mp3|m4a|ogg|wav|aac|opus)$/i, "") || url; } catch (e) { /* keep raw */ }
+  mine.push(urlItem(title, url));
   input.value = "";
   saveUrls();
   renderMine();
 });
 
-loadUrls();
-renderFeed();
-renderMine();
-
-// Restore saved spot (episode + timestamp), without autoplaying.
-if (savedPos && savedPos.url && savedPos.time > 0 && !String(savedPos.url).startsWith("blob:")) {
-  const ep = EPISODES.find(e => e.url === savedPos.url);
-  const mineItem = !ep && mine.find(m => m.url === savedPos.url && m.source === "url");
-  const item = ep ? { title: ep.title, url: ep.url, meta: ep.date + " · " + fmt(ep.secs), downloadable: true }
-    : mineItem ? { title: mineItem.title, url: mineItem.url, meta: mineItem.meta || "", downloadable: true } : null;
-  if (item) {
-    current = item;
-    audio.src = item.url;
-    audio.playbackRate = parseFloat(document.getElementById("speed").value);
-    nowTitle.textContent = item.title;
-    nowSub.textContent = "Paused at " + fmt(savedPos.time) + " — press Play to resume";
-    playBtn.disabled = false;
-    dlBtn.disabled = !item.downloadable;
-    updateMediaSession();
-    const seekOnce = () => { audio.currentTime = Math.min(savedPos.time, (audio.duration || savedPos.time)); audio.removeEventListener("loadedmetadata", seekOnce); };
-    audio.addEventListener("loadedmetadata", seekOnce);
-    document.querySelectorAll("#feedList .ep").forEach(n => { if (n.dataset.url === item.url) n.classList.add("playing"); });
-  }
+// ---------- Start up ----------
+function findItem(key) { return feed.find(x => x.key === key) || mine.find(x => x.key === key) || null; }
+function restoreLast() {
+  const key = LS.get("lp-podcast-last", null);
+  if (!key) return;
+  const item = findItem(key);
+  const p = prog(key);
+  if (!item || p.done || !(p.time > 0)) return;
+  setCurrent(item, false);
+  nowSub.textContent = "Paused at " + fmt(p.time) + " \u2014 press Play to resume";
+  curEl.textContent = fmt(p.time);
 }
+
+(async () => {
+  loadUrls();
+  const [eps] = await Promise.all([loadFeed(), loadFiles()]);
+  feed = (eps || []).map(toFeedItem);
+  renderFeed();
+  renderMine();
+  restoreLast();
+})();
 </script>
 <script>
 if ('serviceWorker' in navigator) {
