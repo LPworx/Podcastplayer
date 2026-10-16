@@ -34,7 +34,8 @@
   /* Top bar */
   .top { display:flex; align-items:center; justify-content:space-between; padding:18px 0 14px; }
   .brand { font-family:var(--display); font-weight:800; font-size:26px; letter-spacing:-0.02em; margin:0; }
-  .brand span { color:var(--accent); }
+  .brand { display:flex; align-items:center; gap:10px; }
+  .brand .mark { width:30px; height:30px; color:var(--accent); flex-shrink:0; }
   .add-toggle { border:1px solid var(--line); background:var(--surface); border-radius:999px; padding:7px 14px; font-weight:600; font-size:14px; }
   .add-toggle[aria-expanded="true"] { background:var(--accent-soft); border-color:var(--accent); }
 
@@ -122,12 +123,12 @@
 <meta name="theme-color" content="#2174C4" />
 <link rel="manifest" href="manifest.json" />
 <link rel="icon" href="icon-192.png" />
-<link rel="apple-touch-icon" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <h1 class="brand">LP&rsquo;s <span>Podcast</span></h1>
+    <h1 class="brand"><svg class="mark" aria-hidden="true" viewBox="0 0 541 540"><path fill="currentColor" fill-rule="evenodd" d="M217.5 537.8C217.2 536.5 217.1 515.2 217.2 490.5L217.5 445.5L270.5 445.5L323.5 445.5L323.8 466C324.4 510.3 319.2 525.1 299.4 534.5C289.2 539.4 284.3 539.9 249.8 540L218 540L217.5 537.8ZM40.2 430.9C24.5 428.6 11.7 419.7 5.8 406.9C0.3 395 0.5 404.2 0.5 194.5L0.5 0.5L35 0.5L69.5 0.6L76.9 3.3C91.6 8.7 100 17.8 104.7 33.7C106.3 39 106.5 50.9 107 181.9L107.5 324.4L110 324.9C111.4 325.2 184.7 325.3 273 325L433.5 324.5L433.5 270L433.5 215.5L379 215.5L324.5 215.5L324.2 263C324.1 289.1 323.6 310.8 323.2 311.2C322.3 312.1 219.5 312.4 218 311.5C216.6 310.6 216.6 161.9 218 151.3C221 128.3 232.6 114.8 253.5 109.9C260.4 108.2 477.5 107.4 494.2 108.9C519.9 111.3 532.2 120.5 538.7 142.6C540.3 148.1 540.5 157.2 540.8 264.5C541 344.7 540.8 383.1 540 388.8C536.7 414.1 524.4 427 500 430.9C491.8 432.3 49.5 432.2 40.2 430.9Z"/></svg>LP&rsquo;s Podcast</h1>
     <button class="add-toggle" id="addToggle" aria-expanded="false" aria-controls="addPanel">+ Add audio</button>
   </header>
 
