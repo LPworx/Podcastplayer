@@ -136,10 +136,39 @@ function setCurrent(item, el) {
   audio.playbackRate = parseFloat(document.getElementById("speed").value);
   nowTitle.textContent = item.title;
   nowSub.textContent = item.meta || "";
+  updateMediaSession();
   playBtn.disabled = false;
   dlBtn.disabled = !item.downloadable;
   audio.play().then(() => { playBtn.textContent = "Pause"; }).catch(() => { playBtn.textContent = "Play"; });
 }
+
+// Media Session: expose the player to watch / Bluetooth / lock-screen controls.
+function updateMediaSession() {
+  if (!("mediaSession" in navigator)) return;
+  if (!current) { navigator.mediaSession.metadata = null; return; }
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title: current.title,
+    artist: "LP's Podcast",
+    album: current.meta || "LP's Podcast",
+    artwork: [{ src: "icon-192.png", sizes: "192x192", type: "image/png" }]
+  });
+}
+function skipBy(sec) {
+  if (!current) return;
+  audio.currentTime = Math.max(0, Math.min(audio.duration || 0, audio.currentTime + sec));
+}
+if ("mediaSession" in navigator) {
+  navigator.mediaSession.setActionHandler("play", () => { if (current) { audio.play(); playBtn.textContent = "Pause"; } });
+  navigator.mediaSession.setActionHandler("pause", () => { audio.pause(); playBtn.textContent = "Play"; });
+  navigator.mediaSession.setActionHandler("seekbackward", (d) => skipBy(-((d && d.seekOffset) || 15)));
+  navigator.mediaSession.setActionHandler("seekforward", (d) => skipBy(((d && d.seekOffset) || 15)));
+  navigator.mediaSession.setActionHandler("previoustrack", () => skipBy(-30));
+  navigator.mediaSession.setActionHandler("nexttrack", () => skipBy(30));
+}
+audio.addEventListener("play", () => { if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "playing"; });
+audio.addEventListener("pause", () => { if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "paused"; });
+audio.addEventListener("ended", () => { if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "none"; });
+
 
 playBtn.addEventListener("click", () => {
   if (!current) return;
