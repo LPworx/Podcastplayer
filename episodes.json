@@ -1,15 +1,21 @@
-[
-  { "title": "Open Models, Real Limits", "date": "2026-10-16", "secs": 578, "url": "audio/open-models-real-limits-2026-10-16.mp3" },
-  { "title": "Tech Briefing October 15: Original Audio", "date": "2026-10-15", "secs": 510, "url": "audio/tech-briefing-october-15-original-audio.ogg" },
-  { "title": "Tech Briefing October 15: Specs, Scion, Lawsuits, Apertus, TSMC, and AI Music Labels", "date": "2026-10-15", "secs": 498, "url": "audio/tech-briefing-october-15-specs-scion-lawsuits-apertus-tsmc-and-ai-music-labels-2026-10-15.mp3" },
-  { "title": "Build It, Sell It: Cool Things to Make with AI and How They Pay", "date": "2026-10-15", "secs": 569, "url": "audio/build-it-sell-it-cool-things-to-make-with-ai-and-how-they-pay-2026-10-15.mp3" },
-  { "title": "Beyond the Chatbox: Dashboards, Decisions, and the Thousand-Agent Test", "date": "2026-10-14", "secs": 694, "url": "audio/beyond-the-chatbox-dashboards-decisions-and-the-thousand-agent-test-2026-10-14.mp3" },
-  { "title": "Your Own Private AI: The Local Model Playbook", "date": "2026-10-12", "secs": 648, "url": "audio/your-own-private-ai-the-local-model-playbook-2026-10-12.mp3" },
-  { "title": "The Real AI Fears: What's Actually Scary Right Now", "date": "2026-10-11", "secs": 540, "url": "audio/the-real-ai-fears-whats-actually-scary-right-now-2026-10-11.mp3" },
-  { "title": "Welcome to LP's Podcast", "date": "2026-10-09", "secs": 24, "url": "audio/welcome-to-lps-podcast-2026-10-09.mp3" },
-  { "title": "Claude's Big Week: Haiku 5.5, Cheaper Caching, and the Agent Swarm", "date": "2026-10-09", "secs": 810, "url": "audio/claudes-big-week-haiku-55-cheaper-caching-and-the-agent-swarm-2026-10-09.mp3" },
-  { "title": "Meet Muse: What Your Personal AI Agent Can Actually Do", "date": "2026-10-09", "secs": 573, "url": "audio/meet-muse-what-your-personal-ai-agent-can-actually-do-2026-10-09.mp3" },
-  { "title": "The Pleasant Place", "date": "2026-10-09", "secs": 605, "url": "audio/the-pleasant-place-2026-10-09-0e5647cb.mp3" },
-  { "title": "How Computers Work", "date": "2026-10-09", "secs": 1107, "url": "audio/how-computers-work-2026-10-09-24cf859b.mp3" },
-  { "title": "Always-On Agents: Running Your Own Agent Team", "date": "2026-10-09", "secs": 704, "url": "audio/always-on-agents-running-your-own-agent-team-2026-10-09.mp3" }
-]
+{
+  "shows": [
+    { "id": "news", "name": "LP News", "color": "#C41E1E", "colorDark": "#F0625F" },
+    { "id": "learning", "name": "LP Learning", "color": "#7F1EC4", "colorDark": "#B587F0" }
+  ],
+  "episodes": [
+    { "title": "Open Models, Real Limits", "show": "news", "date": "2026-10-16", "secs": 578, "url": "audio/open-models-real-limits-2026-10-16.mp3" },
+    { "title": "Tech Briefing October 15: Original Audio", "show": "news", "date": "2026-10-15", "secs": 510, "url": "audio/tech-briefing-october-15-original-audio.ogg" },
+    { "title": "Tech Briefing October 15: Specs, Scion, Lawsuits, Apertus, TSMC, and AI Music Labels", "show": "news", "date": "2026-10-15", "secs": 498, "url": "audio/tech-briefing-october-15-specs-scion-lawsuits-apertus-tsmc-and-ai-music-labels-2026-10-15.mp3" },
+    { "title": "Build It, Sell It: Cool Things to Make with AI and How They Pay", "show": "learning", "date": "2026-10-15", "secs": 569, "url": "audio/build-it-sell-it-cool-things-to-make-with-ai-and-how-they-pay-2026-10-15.mp3" },
+    { "title": "Beyond the Chatbox: Dashboards, Decisions, and the Thousand-Agent Test", "show": "learning", "date": "2026-10-14", "secs": 694, "url": "audio/beyond-the-chatbox-dashboards-decisions-and-the-thousand-agent-test-2026-10-14.mp3" },
+    { "title": "Your Own Private AI: The Local Model Playbook", "show": "learning", "date": "2026-10-12", "secs": 648, "url": "audio/your-own-private-ai-the-local-model-playbook-2026-10-12.mp3" },
+    { "title": "The Real AI Fears: What's Actually Scary Right Now", "show": "news", "date": "2026-10-11", "secs": 540, "url": "audio/the-real-ai-fears-whats-actually-scary-right-now-2026-10-11.mp3" },
+    { "title": "Welcome to LP's Podcast", "show": "news", "date": "2026-10-09", "secs": 24, "url": "audio/welcome-to-lps-podcast-2026-10-09.mp3" },
+    { "title": "Claude's Big Week: Haiku 5.5, Cheaper Caching, and the Agent Swarm", "show": "news", "date": "2026-10-09", "secs": 810, "url": "audio/claudes-big-week-haiku-55-cheaper-caching-and-the-agent-swarm-2026-10-09.mp3" },
+    { "title": "Meet Muse: What Your Personal AI Agent Can Actually Do", "show": "learning", "date": "2026-10-09", "secs": 573, "url": "audio/meet-muse-what-your-personal-ai-agent-can-actually-do-2026-10-09.mp3" },
+    { "title": "The Pleasant Place", "show": "learning", "date": "2026-10-09", "secs": 605, "url": "audio/the-pleasant-place-2026-10-09-0e5647cb.mp3" },
+    { "title": "How Computers Work", "show": "learning", "date": "2026-10-09", "secs": 1107, "url": "audio/how-computers-work-2026-10-09-24cf859b.mp3" },
+    { "title": "Always-On Agents: Running Your Own Agent Team", "show": "learning", "date": "2026-10-09", "secs": 704, "url": "audio/always-on-agents-running-your-own-agent-team-2026-10-09.mp3" }
+  ]
+}

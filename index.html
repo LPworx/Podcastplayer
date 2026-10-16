@@ -117,6 +117,28 @@
   .bar-mini .p svg { width:20px; height:20px; }
   .bar-mini .track { position:absolute; left:0; top:-1px; height:2px; background:var(--accent); width:0; }
   body.has-mini .wrap { padding-bottom:96px; }
+  /* Shows */
+  .themed { --show:var(--show-l, var(--accent)); }
+  @media (prefers-color-scheme: dark) { .themed { --show:var(--show-d, var(--accent)); } }
+  .shows { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:6px 0 10px; }
+  .tile { display:flex; flex-direction:column; align-items:flex-start; gap:12px; text-align:left; background:var(--surface);
+          border:1px solid var(--line); border-radius:20px; padding:16px; min-height:150px; }
+  .tile .mark { width:52px; height:52px; color:var(--show); }
+  .tile-name { font-family:var(--display); font-weight:800; font-size:20px; line-height:1.1; letter-spacing:-0.01em; }
+  .tile-count { color:var(--muted); font-size:13px; margin-top:-6px; }
+  .tile-count b { color:var(--show); font-weight:700; }
+  .show-top { display:flex; align-items:center; gap:12px; padding:16px 0 4px; }
+  .back { width:42px; height:42px; flex-shrink:0; border-radius:50%; border:1px solid var(--line); background:var(--surface); display:grid; place-items:center; }
+  .back svg { width:20px; height:20px; }
+  .show-top .mark { width:38px; height:38px; color:var(--show); flex-shrink:0; }
+  .show-name { font-family:var(--display); font-weight:800; font-size:25px; line-height:1.1; letter-spacing:-0.02em; margin:0; }
+  .show-count { color:var(--muted); font-size:13.5px; }
+  #showView .mini .pr { stroke:var(--show); }
+  #showView .mini .glyph { color:var(--show); }
+  #showView .ep.played .mini .tr { stroke:var(--show); fill:var(--show); }
+  #showView .ep.played .mini .glyph { color:var(--surface); }
+  #showView .ep-sub .left { color:var(--show); }
+  #showView .ep.playing .ep-main, #showView .ep.playing .more { background:color-mix(in srgb, var(--show) 13%, var(--surface)); }
   footer { color:var(--muted); font-size:12px; text-align:center; padding:28px 0 0; }
   @media (prefers-reduced-motion: reduce) { .big .ring .pr, .bar-mini { transition:none; } }
 </style>
@@ -127,6 +149,7 @@
 </head>
 <body>
 <div class="wrap">
+<div id="homeView">
   <header class="top">
     <h1 class="brand"><svg class="mark" aria-hidden="true" viewBox="0 0 541 540"><path fill="currentColor" fill-rule="evenodd" d="M217.5 537.8C217.2 536.5 217.1 515.2 217.2 490.5L217.5 445.5L270.5 445.5L323.5 445.5L323.8 466C324.4 510.3 319.2 525.1 299.4 534.5C289.2 539.4 284.3 539.9 249.8 540L218 540L217.5 537.8ZM40.2 430.9C24.5 428.6 11.7 419.7 5.8 406.9C0.3 395 0.5 404.2 0.5 194.5L0.5 0.5L35 0.5L69.5 0.6L76.9 3.3C91.6 8.7 100 17.8 104.7 33.7C106.3 39 106.5 50.9 107 181.9L107.5 324.4L110 324.9C111.4 325.2 184.7 325.3 273 325L433.5 324.5L433.5 270L433.5 215.5L379 215.5L324.5 215.5L324.2 263C324.1 289.1 323.6 310.8 323.2 311.2C322.3 312.1 219.5 312.4 218 311.5C216.6 310.6 216.6 161.9 218 151.3C221 128.3 232.6 114.8 253.5 109.9C260.4 108.2 477.5 107.4 494.2 108.9C519.9 111.3 532.2 120.5 538.7 142.6C540.3 148.1 540.5 157.2 540.8 264.5C541 344.7 540.8 383.1 540 388.8C536.7 414.1 524.4 427 500 430.9C491.8 432.3 49.5 432.2 40.2 430.9Z"/></svg>LP&rsquo;s Podcast</h1>
     <button class="add-toggle" id="addToggle" aria-expanded="false" aria-controls="addPanel">+ Add audio</button>
@@ -163,6 +186,8 @@
     <audio id="audio" preload="metadata"></audio>
   </section>
 
+  <section aria-label="Shows"><div class="shows" id="showTiles"></div></section>
+
   <div class="add" id="addPanel" hidden>
     <div class="add-row">
       <label class="btn file-btn">Choose audio files<input id="fileInput" type="file" accept="audio/*" multiple /></label>
@@ -179,6 +204,13 @@
     <div class="list" id="mineList"></div>
   </section>
 
+</div>
+<div id="showView" class="themed" hidden>
+  <header class="show-top">
+    <button class="back" id="backBtn" aria-label="Back to shows"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <span id="showMark"></span>
+    <div><h1 class="show-name" id="showName"></h1><div class="show-count" id="showCount"></div></div>
+  </header>
   <section id="feedSection">
     <div id="feedList"><p class="empty">Loading episodes&hellip;</p></div>
   </section>
@@ -187,8 +219,9 @@
     <summary id="archivedSummary">Archived</summary>
     <div class="list" id="archivedList"></div>
   </details>
+</div>
 
-  <footer>LP&rsquo;s Podcast v1.6 &middot; podcast.lpworx.com</footer>
+  <footer>LP&rsquo;s Podcast v1.7 &middot; podcast.lpworx.com</footer>
 </div>
 <div class="bar-mini" id="miniBar" aria-hidden="true">
   <span class="track" id="miniTrack"></span>
@@ -242,7 +275,10 @@ if (oldPos && oldPos.url && !String(oldPos.url).startsWith("blob:")) {
 }
 LS.del("lp-podcast-position");
 function prog(key) { return progress[key] || {}; }
-function setProg(key, patch) { progress[key] = Object.assign({}, progress[key], patch); LS.set("lp-podcast-progress", progress); }
+function setProg(key, patch) {
+  progress[key] = Object.assign({}, progress[key], patch); LS.set("lp-podcast-progress", progress);
+  if ("done" in patch && typeof updateCounts === "function") updateCounts();
+}
 function clearProg(key) { delete progress[key]; LS.set("lp-podcast-progress", progress); }
 
 // ---------- Elements & state ----------
@@ -260,7 +296,9 @@ const ICON = {
 };
 playIcon.innerHTML = ICON.play;
 
-let feed = [], mine = [], current = null, pendingSeek = 0, lastSavedAt = 0, lastPainted = -1;
+let resumeTries = 0, keepKey = null, keepTime = 0; // never save a spot earlier than the saved one unless you moved it yourself
+let shows = [], view = "home", cameFromHome = false;
+let feed = [], mine = [], current = null, resumeTo = 0, lastSavedAt = 0, lastPainted = -1;
 const rowRefs = new Map();
 let archivedUrls = LS.get("lp-podcast-archived", []);
 if (!Array.isArray(archivedUrls)) archivedUrls = [];
@@ -304,7 +342,8 @@ function setCurrent(item, autoplay) {
   const prevKey = current && current.key;
   current = item;
   const p = prog(item.key);
-  pendingSeek = (!p.done && p.time > 0) ? p.time : 0;
+  resumeTo = (!p.done && p.time > 0) ? p.time : 0; resumeTries = 0;
+  keepKey = resumeTo > 0 ? item.key : null; keepTime = resumeTo;
   audio.src = item.url;
   applyControls();
   nowTitle.textContent = item.title;
@@ -324,9 +363,10 @@ function clearPlayer() {
   LS.del("lp-podcast-last"); updateMediaSession(); paintPlayer();
 }
 function savePos() {
-  if (!current) return;
+  if (!current || resumeTo > 0) return; // don't save over the spot we're still jumping to
   const t = audio.currentTime, d = audio.duration;
   if (!isFinite(t)) return;
+  if (keepKey === current.key) { if (t + 2 < keepTime) return; keepKey = null; }
   if (isFinite(d) && d > 0 && d - t < 5) setProg(current.key, { time: 0, dur: d, done: true });
   else if (t >= 1) setProg(current.key, { time: t, dur: isFinite(d) ? d : prog(current.key).dur, done: false });
   else return;
@@ -339,7 +379,7 @@ function paintPlayer() {
   let t = 0, d = 0;
   if (current) {
     d = isFinite(audio.duration) ? audio.duration : (current.secs || prog(current.key).dur || 0);
-    t = (isFinite(audio.currentTime) && audio.currentTime > 0) ? audio.currentTime : (pendingSeek || (audio.paused && !prog(current.key).done ? prog(current.key).time || 0 : 0));
+    t = (isFinite(audio.currentTime) && audio.currentTime > 0) ? audio.currentTime : (resumeTo || (audio.paused && !prog(current.key).done ? prog(current.key).time || 0 : 0));
   }
   $("miniPlay").innerHTML = playing ? ICON.pause : ICON.play;
   $("miniPlay").setAttribute("aria-label", playing ? "Pause" : "Play");
@@ -354,7 +394,7 @@ function paintPlayer() {
 // Slim bar at the bottom while the big player is scrolled out of view.
 let cardVisible = true;
 function paintMini() {
-  const show = !!current && !cardVisible, bar = $("miniBar");
+  const show = !!current && (!cardVisible || view !== "home"), bar = $("miniBar");
   bar.classList.toggle("show", show); bar.setAttribute("aria-hidden", String(!show));
   $("miniTitle").tabIndex = $("miniPlay").tabIndex = show ? 0 : -1;
   document.body.classList.toggle("has-mini", show);
@@ -363,17 +403,18 @@ if ("IntersectionObserver" in window) {
   new IntersectionObserver(es => { cardVisible = es[0].isIntersecting; paintMini(); }).observe(document.querySelector(".now .card"));
 }
 $("miniPlay").addEventListener("click", () => togglePlay());
-$("miniTitle").addEventListener("click", () => window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }));
+$("miniTitle").addEventListener("click", () => { if (view !== "home") { if (cameFromHome) { cameFromHome = false; history.back(); } else { history.replaceState(null, "", location.pathname); route(); } return; } window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); });
 
 function updateMediaSession() {
   if (!("mediaSession" in navigator)) return;
   if (!current) { navigator.mediaSession.metadata = null; return; }
   navigator.mediaSession.metadata = new MediaMetadata({
-    title: current.title, artist: "LP's Podcast", album: current.sub || "LP's Podcast",
+    title: current.title, artist: current.show ? showById(current.show).name : "LP's Podcast", album: "LP's Podcast",
     artwork: [{ src: "icon-192.png", sizes: "192x192", type: "image/png" }, { src: "icon-512.png", sizes: "512x512", type: "image/png" }]
   });
 }
-function skipBy(sec) { if (current) audio.currentTime = Math.max(0, Math.min(audio.duration || 0, audio.currentTime + sec)); }
+function userMoved() { resumeTo = 0; keepKey = null; }
+function skipBy(sec) { userMoved(); if (current) audio.currentTime = Math.max(0, Math.min(audio.duration || 0, audio.currentTime + sec)); }
 function togglePlay() { if (!current) return; if (audio.paused) audio.play().catch(() => {}); else audio.pause(); }
 if ("mediaSession" in navigator) {
   navigator.mediaSession.setActionHandler("play", () => { if (current) audio.play().catch(() => {}); });
@@ -400,11 +441,21 @@ audio.addEventListener("ended", () => {
 audio.addEventListener("loadedmetadata", () => {
   if (isFinite(audio.duration)) {
     if (current && !prog(current.key).dur) setProg(current.key, { dur: audio.duration });
-    if (pendingSeek > 0 && pendingSeek < audio.duration - 5) audio.currentTime = pendingSeek;
   }
-  pendingSeek = 0; paintPlayer();
+  tryResume(); paintPlayer();
 });
+// Jump to the saved spot. Android sometimes ignores the first jump, so retry until it lands.
+function tryResume() {
+  if (!(resumeTo > 0) || !isFinite(audio.duration)) return;
+  if (resumeTo >= audio.duration - 5) { resumeTo = 0; return; }
+  if (Math.abs(audio.currentTime - resumeTo) > 2) {
+    if (++resumeTries > 12) { resumeTo = 0; return; } // give up rather than block saving forever
+    try { audio.currentTime = resumeTo; } catch (e) { /* not seekable yet */ }
+  } else resumeTo = 0;
+}
+["canplay", "playing", "seeked"].forEach(ev => audio.addEventListener(ev, tryResume));
 audio.addEventListener("timeupdate", () => {
+  if (resumeTo > 0) tryResume();
   if (Math.abs(audio.currentTime - lastSavedAt) > 5) { lastSavedAt = audio.currentTime; savePos(); }
   const sec = Math.floor(audio.currentTime);
   if (sec !== lastPainted) { lastPainted = sec; paintPlayer(); if (current) paintRow(current.key); }
@@ -425,7 +476,7 @@ $("speedBtn").addEventListener("click", () => {
   speed = SPEEDS[(SPEEDS.indexOf(speed) + 1) % SPEEDS.length];
   LS.set("lp-podcast-speed", speed); applyControls();
 });
-scrub.addEventListener("input", () => { if (current) audio.currentTime = parseFloat(scrub.value); });
+scrub.addEventListener("input", () => { userMoved(); if (current) audio.currentTime = parseFloat(scrub.value); });
 applyControls();
 
 function download(item) {
@@ -481,7 +532,7 @@ function row(item, extras) {
   const mark = document.createElement("button");
   mark.addEventListener("click", () => {
     setProg(item.key, { done: !prog(item.key).done, time: 0 });
-    if (current && current.key === item.key) pendingSeek = 0;
+    if (current && current.key === item.key) userMoved();
     paintRow(item.key);
   });
   actions.append(mark);
@@ -499,9 +550,11 @@ function row(item, extras) {
 }
 
 // ---------- Feed (episodes.json) ----------
+function showById(id) { return shows.find(x => x.id === id) || shows[0] || { id: "", name: "LP's Podcast" }; }
 function toFeedItem(ep) {
-  return { key: ep.url, title: ep.title, url: ep.url, date: ep.date, secs: ep.secs || 0, source: "feed", downloadable: true,
-           length: ep.secs ? mins(ep.secs) : "", sub: dayLabel(ep.date) + (ep.secs ? ", " + mins(ep.secs) : ""),
+  const sh = showById(ep.show);
+  return { key: ep.url, title: ep.title, url: ep.url, date: ep.date, show: sh.id, secs: ep.secs || 0, source: "feed", downloadable: true,
+           length: ep.secs ? mins(ep.secs) : "", sub: sh.name + ", " + dayLabel(ep.date) + (ep.secs ? ", " + mins(ep.secs) : ""),
            filename: slug(ep.title) + "." + extOf(ep.url) };
 }
 async function loadFeed() {
@@ -509,25 +562,27 @@ async function loadFeed() {
     const res = await fetch("episodes.json", { cache: "no-store" });
     if (!res.ok) throw new Error("HTTP " + res.status);
     const data = await res.json();
-    const eps = (Array.isArray(data) ? data : data.episodes || []).filter(e => e && e.title && e.url);
-    LS.set("lp-podcast-feed-cache", eps);
-    return eps;
+    const out = { shows: Array.isArray(data.shows) ? data.shows : [], episodes: (Array.isArray(data) ? data : data.episodes || []).filter(e => e && e.title && e.url) };
+    LS.set("lp-podcast-feed-cache", out);
+    return out;
   } catch (e) {
     const cached = LS.get("lp-podcast-feed-cache", null);
-    return Array.isArray(cached) ? cached : null;
+    if (Array.isArray(cached)) return { shows: [], episodes: cached };
+    return cached && Array.isArray(cached.episodes) ? cached : null;
   }
 }
 function setArchived(url, on) {
   archivedUrls = archivedUrls.filter(u => u !== url);
   if (on) archivedUrls.push(url);
-  LS.set("lp-podcast-archived", archivedUrls); renderFeed();
+  LS.set("lp-podcast-archived", archivedUrls); renderFeed(); updateCounts();
 }
 function renderFeed() {
   const wrap = $("feedList"), arch = $("archivedList"), archSec = $("archivedSection");
   wrap.innerHTML = ""; arch.innerHTML = "";
+  if (feed.length && !feed.some(x => x.show === view && !archivedUrls.includes(x.url))) wrap.innerHTML = '<p class="empty">No episodes here yet. New ones show up as soon as they\u2019re added.</p>';
   if (!feed.length) { wrap.innerHTML = '<p class="empty">Episodes didn’t load. Check your connection, then reload the page.</p>'; }
   let list = null, lastLabel = null, archCount = 0;
-  feed.forEach(item => {
+  feed.filter(item => item.show === view).forEach(item => {
     if (archivedUrls.includes(item.url)) {
       archCount++;
       arch.appendChild(row(item, [{ label: "Unarchive", onClick: () => setArchived(item.url, false) }]));
@@ -544,6 +599,46 @@ function renderFeed() {
   archSec.hidden = !archCount;
   $("archivedSummary").textContent = "Archived (" + archCount + ")";
 }
+
+// ---------- Shows: home tiles and one view per show ----------
+function markSvg() { const m = document.querySelector(".brand .mark"); return m ? m.outerHTML : ""; }
+function themeEl(el, sh) { el.style.setProperty("--show-l", sh.color || ""); el.style.setProperty("--show-d", sh.colorDark || sh.color || ""); }
+function unplayed(id) { return feed.filter(x => x.show === id && !archivedUrls.includes(x.url) && !prog(x.key).done).length; }
+function countText(n) { return n ? "<b>" + n + "</b> unplayed" : "All caught up"; }
+function renderTiles() {
+  const wrap = $("showTiles"); wrap.innerHTML = "";
+  shows.forEach(sh => {
+    const b = document.createElement("button"); b.className = "tile themed"; b.dataset.show = sh.id; themeEl(b, sh);
+    b.innerHTML = markSvg() + '<span><span class="tile-name"></span></span><span class="tile-count"></span>';
+    b.querySelector(".tile-name").textContent = sh.name;
+    b.addEventListener("click", () => { cameFromHome = true; location.hash = sh.id; });
+    wrap.appendChild(b);
+  });
+  updateCounts();
+}
+function updateCounts() {
+  document.querySelectorAll(".tile").forEach(t => { const n = unplayed(t.dataset.show); t.querySelector(".tile-count").innerHTML = countText(n); t.setAttribute("aria-label", t.querySelector(".tile-name").textContent + ", " + (n ? n + " unplayed" : "all caught up")); });
+  if (view !== "home") $("showCount").innerHTML = countText(unplayed(view));
+}
+function route() {
+  const id = decodeURIComponent(location.hash.slice(1));
+  const sh = shows.find(x => x.id === id);
+  view = sh ? sh.id : "home";
+  $("homeView").hidden = !!sh; $("showView").hidden = !sh;
+  if (sh) {
+    themeEl($("showView"), sh);
+    $("showMark").innerHTML = markSvg(); $("showName").textContent = sh.name;
+    document.title = sh.name;
+    renderFeed(); updateCounts();
+  } else { document.title = "LP's Podcast"; updateCounts(); }
+  window.scrollTo(0, 0);
+  paintMini();
+}
+window.addEventListener("hashchange", route);
+$("backBtn").addEventListener("click", () => {
+  if (cameFromHome) { cameFromHome = false; history.back(); }
+  else { history.replaceState(null, "", location.pathname + location.search); route(); }
+});
 
 // ---------- Your audio ----------
 function saveUrls() { LS.set("lp-podcast-urls", mine.filter(x => x.source === "url").map(x => ({ title: x.title, url: x.url }))); }
@@ -620,9 +715,10 @@ function restoreLast() {
 }
 (async () => {
   loadUrls();
-  const [eps] = await Promise.all([loadFeed(), loadFiles()]);
-  feed = (eps || []).map(toFeedItem);
-  renderFeed(); renderMine(); restoreLast();
+  const [data] = await Promise.all([loadFeed(), loadFiles()]);
+  shows = (data && data.shows.length) ? data.shows : [{ id: "main", name: "LP's Podcast" }];
+  feed = ((data && data.episodes) || []).map(toFeedItem);
+  renderTiles(); renderMine(); route(); restoreLast();
   runShortcut();
 })();
 
@@ -630,7 +726,7 @@ function restoreLast() {
 function runShortcut() {
   const action = new URLSearchParams(location.search).get("action");
   if (!action) return;
-  history.replaceState(null, "", location.pathname);
+  history.replaceState(null, "", location.pathname + location.hash);
   let item = null;
   if (action === "resume") {
     const key = LS.get("lp-podcast-last", null);
