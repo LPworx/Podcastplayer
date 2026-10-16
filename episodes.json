@@ -4,6 +4,7 @@
     { "id": "learning", "name": "LP Learning", "color": "#7F1EC4", "colorDark": "#B587F0", "description": "AI explainers, how-tos, tech history and short fiction, made for Luke with Muse." }
   ],
   "episodes": [
+    { "title":  "Git, GitHub, and the Undo Button", "show":  "learning", "date":  "2026-10-16", "secs":  585, "url":  "audio/git-github-and-the-undo-button-2026-10-16.mp3", "description":  "What GitHub actually is and how people use it, from commits and branches to pull requests, Actions and Pages, plus where AI coding tools fit." },
     { "title": "Open Models, Real Limits", "show": "news", "date": "2026-10-16", "secs": 578, "url": "audio/open-models-real-limits-2026-10-16.mp3" },
     { "title": "Tech Briefing October 15: Original Audio", "show": "news", "date": "2026-10-15", "secs": 510, "url": "audio/tech-briefing-october-15-original-audio.ogg" },
     { "title": "Tech Briefing October 15: Specs, Scion, Lawsuits, Apertus, TSMC, and AI Music Labels", "show": "news", "date": "2026-10-15", "secs": 498, "url": "audio/tech-briefing-october-15-specs-scion-lawsuits-apertus-tsmc-and-ai-music-labels-2026-10-15.mp3", "description": "Maya and Devon on October 15 news - Figma Specs, Anthropic Scion, eight-state OpenAI lawsuits, Apertus 1.5, TSMC earnings, and YouTube Music AI labels - with builder takeaways.", "guid": "ep-a05f593a-0f1a-4c13-86f4-6697b0cb4cfd" },
