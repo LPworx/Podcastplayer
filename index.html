@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<meta name="robots" content="noindex" />
+<title>LP's Podcast</title>
+<style>
+  :root { --blue:#2174C4; --bg:#fff; --fg:#111; --muted:#666; --line:#e3e3e3; --chip:#f1f5f9; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#121212; --fg:#f2f2f2; --muted:#aaa; --line:#2a2a2a; --chip:#1e1e1e; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background:var(--bg); color:var(--fg); }
+  header { padding:20px 16px 8px; max-width:720px; margin:0 auto; }
+  header h1 { margin:0; font-size:28px; }
+  header p { color:var(--muted); margin:6px 0 0; }
+  main { max-width:720px; margin:0 auto; padding:8px 16px 40px; }
+  .player { position:sticky; top:0; background:var(--bg); padding:12px 0; border-bottom:1px solid var(--line); z-index:2; }
+  .now { font-weight:700; font-size:16px; }
+  .now-sub { color:var(--muted); font-size:13px; margin-top:2px; min-height:18px; }
+  .scrub { width:100%; margin:10px 0 4px; accent-color:var(--blue); }
+  .times { display:flex; justify-content:space-between; font-size:12px; color:var(--muted); }
+  .controls { display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap; }
+  button, select, input[type="text"] { font:inherit; }
+  button { border:1px solid var(--line); background:var(--chip); color:var(--fg); border-radius:999px; padding:8px 14px; cursor:pointer; }
+  button.primary { background:var(--blue); border-color:var(--blue); color:#fff; font-weight:700; }
+  button:disabled { opacity:.5; cursor:default; }
+  select { border:1px solid var(--line); background:var(--chip); color:var(--fg); border-radius:8px; padding:7px 8px; }
+  h2 { font-size:18px; margin:24px 0 8px; }
+  .ep { display:flex; gap:10px; padding:12px 0; border-bottom:1px solid var(--line); align-items:flex-start; }
+  .ep.playing { background:var(--chip); border-radius:8px; padding-left:8px; padding-right:8px; }
+  .ep-info { flex:1; min-width:0; }
+  .ep-title { font-weight:600; }
+  .ep-meta { color:var(--muted); font-size:13px; margin-top:2px; }
+  .ep-actions { display:flex; gap:6px; flex-shrink:0; }
+  .ep-actions button { padding:6px 10px; font-size:13px; }
+  .add-box { border:1px dashed var(--line); border-radius:12px; padding:14px; margin-top:8px; }
+  .add-box label { display:block; font-weight:600; margin-bottom:6px; }
+  .row { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+  input[type="text"] { flex:1; min-width:180px; border:1px solid var(--line); background:var(--bg); color:var(--fg); border-radius:8px; padding:8px 10px; }
+  .note { color:var(--muted); font-size:13px; margin-top:8px; }
+  .badge { display:inline-block; font-size:11px; font-weight:700; background:var(--blue); color:#fff; border-radius:999px; padding:2px 8px; margin-left:6px; vertical-align:middle; }
+  footer { color:var(--muted); font-size:12px; text-align:center; padding:24px 0 8px; }
+</style>
+<meta name="theme-color" content="#2174C4" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icon-192.png" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+</head>
+<body>
+<header>
+  <h1>LP&rsquo;s Podcast</h1>
+  <p>Play episodes, or add audio from other AIs. Your own audio stays on your device &mdash; nothing is uploaded.</p>
+</header>
+<main>
+  <section class="player" aria-label="Player">
+    <div class="now" id="nowTitle">Pick an episode below</div>
+    <div class="now-sub" id="nowSub"></div>
+    <input class="scrub" id="scrub" type="range" min="0" max="0" value="0" step="1" aria-label="Seek" />
+    <div class="times"><span id="cur">0:00</span><span id="dur">0:00</span></div>
+    <div class="controls">
+      <button id="back15" title="Back 15 seconds">&minus;15s</button>
+      <button class="primary" id="playBtn" disabled>Play</button>
+      <button id="fwd15" title="Forward 15 seconds">+15s</button>
+      <select id="speed" aria-label="Playback speed">
+        <option value="0.75">0.75&times;</option>
+        <option value="1" selected>1&times;</option>
+        <option value="1.25">1.25&times;</option>
+        <option value="1.5">1.5&times;</option>
+        <option value="2">2&times;</option>
+      </select>
+      <button id="dlBtn" disabled>Download</button>
+    </div>
+    <audio id="audio" preload="metadata"></audio>
+  </section>
+
+  <h2>Your audio <span class="badge">NEW</span></h2>
+  <div class="add-box">
+    <label for="fileInput">Add audio files from your device</label>
+    <input id="fileInput" type="file" accept="audio/*" multiple />
+    <div class="row">
+      <input id="urlInput" type="text" placeholder="Or paste an MP3 / audio URL" />
+      <button id="addUrlBtn">Add URL</button>
+    </div>
+    <p class="note">Files play locally in this browser and are forgotten when you leave the page. URLs you add are remembered in this browser.</p>
+  </div>
+  <div id="mineList"></div>
+
+  <h2>LP&rsquo;s Podcast episodes</h2>
+  <div id="feedList"></div>
+
+  <footer>LP&rsquo;s Podcast &middot; lpworx.com</footer>
+</main>
+<script>
+const EPISODES = [
+  { title: "Tech Briefing October 15: Specs, Scion, Lawsuits, Apertus, TSMC, and AI Music Labels", date: "2026-10-15", secs: 498, url: "audio/tech-briefing-october-15-specs-scion-lawsuits-apertus-tsmc-and-ai-music-labels-2026-10-15.mp3" },
+  { title: "Build It, Sell It: Cool Things to Make with AI and How They Pay", date: "2026-10-15", secs: 569, url: "audio/build-it-sell-it-cool-things-to-make-with-ai-and-how-they-pay-2026-10-15.mp3" },
+  { title: "Beyond the Chatbox: Dashboards, Decisions, and the Thousand-Agent Test", date: "2026-10-14", secs: 694, url: "audio/beyond-the-chatbox-dashboards-decisions-and-the-thousand-agent-test-2026-10-14.mp3" },
+  { title: "Your Own Private AI: The Local Model Playbook", date: "2026-10-12", secs: 648, url: "audio/your-own-private-ai-the-local-model-playbook-2026-10-12.mp3" },
+  { title: "The Real AI Fears: What's Actually Scary Right Now", date: "2026-10-11", secs: 540, url: "audio/the-real-ai-fears-whats-actually-scary-right-now-2026-10-11.mp3" },
+  { title: "Welcome to LP's Podcast", date: "2026-10-09", secs: 24, url: "audio/welcome-to-lps-podcast-2026-10-09.mp3" },
+  { title: "Claude's Big Week: Haiku 5.5, Cheaper Caching, and the Agent Swarm", date: "2026-10-09", secs: 810, url: "audio/claudes-big-week-haiku-55-cheaper-caching-and-the-agent-swarm-2026-10-09.mp3" },
+  { title: "Meet Muse: What Your Personal AI Agent Can Actually Do", date: "2026-10-09", secs: 573, url: "audio/meet-muse-what-your-personal-ai-agent-can-actually-do-2026-10-09.mp3" },
+  { title: "The Pleasant Place", date: "2026-10-09", secs: 605, url: "audio/the-pleasant-place-2026-10-09-0e5647cb.mp3" },
+  { title: "How Computers Work", date: "2026-10-09", secs: 1107, url: "audio/how-computers-work-2026-10-09-24cf859b.mp3" },
+  { title: "Always-On Agents: Running Your Own Agent Team", date: "2026-10-09", secs: 704, url: "audio/always-on-agents-running-your-own-agent-team-2026-10-09.mp3" },
+];
+
+const audio = document.getElementById("audio");
+const playBtn = document.getElementById("playBtn");
+const dlBtn = document.getElementById("dlBtn");
+const scrub = document.getElementById("scrub");
+const curEl = document.getElementById("cur");
+const durEl = document.getElementById("dur");
+const nowTitle = document.getElementById("nowTitle");
+const nowSub = document.getElementById("nowSub");
+
+let mine = []; // { title, url, source: 'file'|'url', downloadable }
+let current = null; // { title, url, meta, downloadable, el }
+
+function fmt(s) {
+  if (!isFinite(s) || s < 0) s = 0;
+  s = Math.floor(s);
+  const m = Math.floor(s / 60), r = s % 60;
+  return m + ":" + String(r).padStart(2, "0");
+}
+
+function setCurrent(item, el) {
+  current = item;
+  document.querySelectorAll(".ep.playing").forEach(n => n.classList.remove("playing"));
+  if (el) el.classList.add("playing");
+  audio.src = item.url;
+  audio.playbackRate = parseFloat(document.getElementById("speed").value);
+  nowTitle.textContent = item.title;
+  nowSub.textContent = item.meta || "";
+  playBtn.disabled = false;
+  dlBtn.disabled = !item.downloadable;
+  audio.play().then(() => { playBtn.textContent = "Pause"; }).catch(() => { playBtn.textContent = "Play"; });
+}
+
+playBtn.addEventListener("click", () => {
+  if (!current) return;
+  if (audio.paused) { audio.play(); playBtn.textContent = "Pause"; }
+  else { audio.pause(); playBtn.textContent = "Play"; }
+});
+document.getElementById("back15").addEventListener("click", () => { audio.currentTime = Math.max(0, audio.currentTime - 15); });
+document.getElementById("fwd15").addEventListener("click", () => { audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 15); });
+document.getElementById("speed").addEventListener("change", e => { audio.playbackRate = parseFloat(e.target.value); });
+dlBtn.addEventListener("click", () => {
+  if (!current || !current.downloadable) return;
+  const a = document.createElement("a");
+  a.href = current.url;
+  a.download = current.title.replace(/[^a-z0-9]+/gi, "-").toLowerCase() + ".mp3";
+  document.body.appendChild(a); a.click(); a.remove();
+});
+audio.addEventListener("timeupdate", () => {
+  if (isFinite(audio.duration)) { scrub.max = Math.floor(audio.duration); scrub.value = Math.floor(audio.currentTime); }
+  curEl.textContent = fmt(audio.currentTime);
+});
+audio.addEventListener("loadedmetadata", () => {
+  durEl.textContent = fmt(audio.duration);
+  if (isFinite(audio.duration)) scrub.max = Math.floor(audio.duration);
+});
+audio.addEventListener("ended", () => { playBtn.textContent = "Play"; });
+audio.addEventListener("error", () => { nowSub.textContent = "Couldn't play this one. The file may be gone or the host may block direct playback."; });
+scrub.addEventListener("input", () => { audio.currentTime = parseFloat(scrub.value); });
+
+function row(item, removable, onRemove) {
+  const div = document.createElement("div");
+  div.className = "ep";
+  const info = document.createElement("div");
+  info.className = "ep-info";
+  const t = document.createElement("div");
+  t.className = "ep-title"; t.textContent = item.title;
+  const m = document.createElement("div");
+  m.className = "ep-meta"; m.textContent = item.meta || "";
+  info.append(t, m);
+  const actions = document.createElement("div");
+  actions.className = "ep-actions";
+  const play = document.createElement("button");
+  play.textContent = "Play";
+  play.addEventListener("click", () => setCurrent(item, div));
+  actions.append(play);
+  if (removable) {
+    const rm = document.createElement("button");
+    rm.textContent = "Remove";
+    rm.addEventListener("click", onRemove);
+    actions.append(rm);
+  }
+  div.append(info, actions);
+  return div;
+}
+
+function renderFeed() {
+  const list = document.getElementById("feedList");
+  list.innerHTML = "";
+  EPISODES.forEach(ep => {
+    list.appendChild(row({ title: ep.title, url: ep.url, meta: ep.date + " · " + fmt(ep.secs), downloadable: true }, false));
+  });
+}
+
+function saveUrls() {
+  try {
+    const urls = mine.filter(x => x.source === "url").map(x => ({ title: x.title, url: x.url }));
+    localStorage.setItem("lp-podcast-urls", JSON.stringify(urls));
+  } catch (e) { /* private mode etc. */ }
+}
+function loadUrls() {
+  try {
+    const raw = localStorage.getItem("lp-podcast-urls");
+    if (!raw) return;
+    JSON.parse(raw).forEach(x => {
+      mine.push({ title: x.title, url: x.url, source: "url", downloadable: true, meta: "Added by URL" });
+    });
+  } catch (e) { /* ignore bad data */ }
+}
+function renderMine() {
+  const list = document.getElementById("mineList");
+  list.innerHTML = "";
+  if (mine.length === 0) {
+    const p = document.createElement("p");
+    p.className = "note";
+    p.textContent = "Nothing added yet.";
+    list.appendChild(p);
+    return;
+  }
+  mine.forEach((item, idx) => {
+    list.appendChild(row(item, true, () => {
+      if (item.source === "file") URL.revokeObjectURL(item.url);
+      mine.splice(idx, 1);
+      saveUrls();
+      renderMine();
+    }));
+  });
+}
+
+document.getElementById("fileInput").addEventListener("change", e => {
+  [...e.target.files].forEach(f => {
+    mine.push({ title: f.name.replace(/\.[^.]+$/, ""), url: URL.createObjectURL(f), source: "file", downloadable: false, meta: "From this device · " + f.name });
+  });
+  e.target.value = "";
+  renderMine();
+});
+document.getElementById("addUrlBtn").addEventListener("click", () => {
+  const input = document.getElementById("urlInput");
+  const url = input.value.trim();
+  if (!url) return;
+  let title = url;
+  try { title = decodeURIComponent(new URL(url).pathname.split("/").pop() || url).replace(/[-_]/g, " ").replace(/\.mp3$/i, "") || url; } catch (e) { /* keep raw */ }
+  mine.push({ title, url, source: "url", downloadable: true, meta: "Added by URL" });
+  input.value = "";
+  saveUrls();
+  renderMine();
+});
+
+loadUrls();
+renderFeed();
+renderMine();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>
