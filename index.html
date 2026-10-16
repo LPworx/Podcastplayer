@@ -97,6 +97,11 @@
   <h2>LP&rsquo;s Podcast episodes</h2>
   <div id="feedList"></div>
 
+  <div id="archivedSection" style="display:none">
+    <h2>Archived episodes</h2>
+    <div id="archivedList"></div>
+  </div>
+
   <footer>LP&rsquo;s Podcast &middot; lpworx.com</footer>
 </main>
 <script>
@@ -126,6 +131,21 @@ const nowSub = document.getElementById("nowSub");
 
 let mine = []; // { title, url, source: 'file'|'url', downloadable }
 let current = null; // { title, url, meta, downloadable, el }
+
+// Remember spot: save episode + timestamp, restore on next visit.
+let savedPos = null;
+try { savedPos = JSON.parse(localStorage.getItem("lp-podcast-position") || "null"); } catch (e) { savedPos = null; }
+let lastSavedAt = 0;
+function savePos() {
+  if (!current || !isFinite(audio.currentTime) || audio.currentTime < 1) return;
+  if (audio.duration && audio.currentTime > audio.duration - 5) return; // finished, don't save the tail
+  try { localStorage.setItem("lp-podcast-position", JSON.stringify({ url: current.url, title: current.title, meta: current.meta || "", time: audio.currentTime })); } catch (e) { /* private mode etc. */ }
+}
+
+// Archive: hide finished episodes from the main list, keep them recoverable.
+let archivedUrls = [];
+try { archivedUrls = JSON.parse(localStorage.getItem("lp-podcast-archived") || "[]"); } catch (e) { archivedUrls = []; }
+function saveArchived() { try { localStorage.setItem("lp-podcast-archived", JSON.stringify(archivedUrls)); } catch (e) { /* private mode etc. */ } }
 
 let skipSecs = 15;
 try { const saved = parseInt(localStorage.getItem("lp-podcast-skip"), 10); if ([10, 15, 30, 60].includes(saved)) skipSecs = saved; } catch (e) { /* private mode etc. */ }
@@ -209,7 +229,11 @@ dlBtn.addEventListener("click", () => {
 audio.addEventListener("timeupdate", () => {
   if (isFinite(audio.duration)) { scrub.max = Math.floor(audio.duration); scrub.value = Math.floor(audio.currentTime); }
   curEl.textContent = fmt(audio.currentTime);
+  if (Math.abs(audio.currentTime - lastSavedAt) > 5) { lastSavedAt = audio.currentTime; savePos(); }
 });
+audio.addEventListener("pause", () => { savePos(); });
+window.addEventListener("pagehide", savePos);
+audio.addEventListener("ended", () => { try { localStorage.removeItem("lp-podcast-position"); } catch (e) { /* private mode etc. */ } });
 audio.addEventListener("loadedmetadata", () => {
   durEl.textContent = fmt(audio.duration);
   if (isFinite(audio.duration)) scrub.max = Math.floor(audio.duration);
@@ -218,9 +242,10 @@ audio.addEventListener("ended", () => { playBtn.textContent = "Play"; });
 audio.addEventListener("error", () => { nowSub.textContent = "Couldn't play this one. The file may be gone or the host may block direct playback."; });
 scrub.addEventListener("input", () => { audio.currentTime = parseFloat(scrub.value); });
 
-function row(item, removable, onRemove) {
+function row(item, removable, onRemove, extra) {
   const div = document.createElement("div");
   div.className = "ep";
+  div.dataset.url = item.url;
   const info = document.createElement("div");
   info.className = "ep-info";
   const t = document.createElement("div");
@@ -240,16 +265,33 @@ function row(item, removable, onRemove) {
     rm.addEventListener("click", onRemove);
     actions.append(rm);
   }
+  if (extra) {
+    const xb = document.createElement("button");
+    xb.textContent = extra.label;
+    xb.addEventListener("click", extra.onClick);
+    actions.append(xb);
+  }
   div.append(info, actions);
   return div;
 }
 
 function renderFeed() {
   const list = document.getElementById("feedList");
+  const arch = document.getElementById("archivedList");
+  const archSection = document.getElementById("archivedSection");
   list.innerHTML = "";
+  arch.innerHTML = "";
+  let archCount = 0;
   EPISODES.forEach(ep => {
-    list.appendChild(row({ title: ep.title, url: ep.url, meta: ep.date + " · " + fmt(ep.secs), downloadable: true }, false));
+    const item = { title: ep.title, url: ep.url, meta: ep.date + " · " + fmt(ep.secs), downloadable: true };
+    if (archivedUrls.includes(ep.url)) {
+      archCount++;
+      arch.appendChild(row(item, false, null, { label: "Unarchive", onClick: () => { archivedUrls = archivedUrls.filter(u => u !== ep.url); saveArchived(); renderFeed(); } }));
+    } else {
+      list.appendChild(row(item, false, null, { label: "Archive", onClick: () => { archivedUrls.push(ep.url); saveArchived(); renderFeed(); } }));
+    }
   });
+  archSection.style.display = archCount ? "" : "none";
 }
 
 function saveUrls() {
@@ -309,6 +351,27 @@ document.getElementById("addUrlBtn").addEventListener("click", () => {
 loadUrls();
 renderFeed();
 renderMine();
+
+// Restore saved spot (episode + timestamp), without autoplaying.
+if (savedPos && savedPos.url && savedPos.time > 0 && !String(savedPos.url).startsWith("blob:")) {
+  const ep = EPISODES.find(e => e.url === savedPos.url);
+  const mineItem = !ep && mine.find(m => m.url === savedPos.url && m.source === "url");
+  const item = ep ? { title: ep.title, url: ep.url, meta: ep.date + " · " + fmt(ep.secs), downloadable: true }
+    : mineItem ? { title: mineItem.title, url: mineItem.url, meta: mineItem.meta || "", downloadable: true } : null;
+  if (item) {
+    current = item;
+    audio.src = item.url;
+    audio.playbackRate = parseFloat(document.getElementById("speed").value);
+    nowTitle.textContent = item.title;
+    nowSub.textContent = "Paused at " + fmt(savedPos.time) + " — press Play to resume";
+    playBtn.disabled = false;
+    dlBtn.disabled = !item.downloadable;
+    updateMediaSession();
+    const seekOnce = () => { audio.currentTime = Math.min(savedPos.time, (audio.duration || savedPos.time)); audio.removeEventListener("loadedmetadata", seekOnce); };
+    audio.addEventListener("loadedmetadata", seekOnce);
+    document.querySelectorAll("#feedList .ep").forEach(n => { if (n.dataset.url === item.url) n.classList.add("playing"); });
+  }
+}
 </script>
 <script>
 if ('serviceWorker' in navigator) {
