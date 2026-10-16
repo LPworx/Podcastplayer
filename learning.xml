@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>LP Learning</title>
+    <link>https://podcast.lpworx.com/#learning</link>
+    <description>AI explainers, how-tos, tech history and short fiction, made for Luke with Muse.</description>
+    <language>en</language>
+    <atom:link href="https://podcast.lpworx.com/learning.xml" rel="self" type="application/rss+xml"/>
+    <itunes:author>LPworx</itunes:author>
+    <itunes:image href="https://podcast.lpworx.com/cover-learning.png"/>
+    <image><url>https://podcast.lpworx.com/cover-learning.png</url><title>LP Learning</title><link>https://podcast.lpworx.com/</link></image>
+    <itunes:category text="Technology"/>
+    <itunes:explicit>false</itunes:explicit>
+    <itunes:block>Yes</itunes:block>
+    <item>
+      <title>Build It, Sell It: Cool Things to Make with AI and How They Pay</title>
+      <description>Maya and Devon on what you can actually build with AI — fun personal projects, tiny subscription tools, automation services, and digital products — plus the honest math on what each path pays.</description>
+      <enclosure url="https://podcast.lpworx.com/audio/build-it-sell-it-cool-things-to-make-with-ai-and-how-they-pay-2026-10-15.mp3" length="4552165" type="audio/mpeg"/>
+      <guid isPermaLink="false">ep-de971d6c-3f21-4c9a-a280-e72f1ca9ac06</guid>
+      <pubDate>Thu, 15 Oct 2026 12:00:00 -0600</pubDate>
+      <itunes:duration>569</itunes:duration>
+    </item>
+    <item>
+      <title>Beyond the Chatbox: Dashboards, Decisions, and the Thousand-Agent Test</title>
+      <description>Maya and Devon on AI's shift from prose to verifiable outputs — Claude Dashboards with readable queries, OpenAI's Decisions API returning typed verdicts, and the thousand-agent bug hunt — with practical plays for NetSuite builders and auditors.</description>
+      <enclosure url="https://podcast.lpworx.com/audio/beyond-the-chatbox-dashboards-decisions-and-the-thousand-agent-test-2026-10-14.mp3" length="5559397" type="audio/mpeg"/>
+      <guid isPermaLink="false">ep-dcfa6ad5-cdba-4943-8db7-b8951839bed1</guid>
+      <pubDate>Wed, 14 Oct 2026 11:59:00 -0600</pubDate>
+      <itunes:duration>694</itunes:duration>
+    </item>
+    <item>
+      <title>Your Own Private AI: The Local Model Playbook</title>
+      <description>Maya and Devon dig into running AI models on your own machine — Ollama, open weights, what fits on real hardware, this week's local AI news, and a privacy-first playbook for sensitive work.</description>
+      <enclosure url="https://podcast.lpworx.com/audio/your-own-private-ai-the-local-model-playbook-2026-10-12.mp3" length="5189989" type="audio/mpeg"/>
+      <guid isPermaLink="false">ep-9b938250-2654-4947-8883-ff49a56b1e87</guid>
+      <pubDate>Mon, 12 Oct 2026 11:58:00 -0600</pubDate>
+      <itunes:duration>648</itunes:duration>
+    </item>
+    <item>
+      <title>Meet Muse: What Your Personal AI Agent Can Actually Do</title>
+      <description>A special episode all about Muse — Meta's personal AI agent. Maya and Devon tour what it can really do, what people use it for, what it costs, and how to get the most out of it.</description>
+      <enclosure url="https://podcast.lpworx.com/audio/meet-muse-what-your-personal-ai-agent-can-actually-do-2026-10-09.mp3" length="4584229" type="audio/mpeg"/>
+      <guid isPermaLink="false">ep-000e2b98-eb8f-4e21-a418-25ca07691a8f</guid>
+      <pubDate>Fri, 09 Oct 2026 11:57:00 -0600</pubDate>
+      <itunes:duration>573</itunes:duration>
+    </item>
+    <item>
+      <title>The Pleasant Place</title>
+      <description>An original short story in the spirit of Steven L. Peck's A Short Stay in Hell. Tom Ellery wakes in an afterlife that seems... nice. Too nice. Narrated fiction.</description>
+      <enclosure url="https://podcast.lpworx.com/audio/the-pleasant-place-2026-10-09-0e5647cb.mp3" length="4840549" type="audio/mpeg"/>
+      <guid isPermaLink="false">ep-69771c12-3cb6-4471-adca-157b8b828bc6</guid>
+      <pubDate>Fri, 09 Oct 2026 11:56:00 -0600</pubDate>
+      <itunes:duration>605</itunes:duration>
+    </item>
+    <item>
+      <title>How Computers Work</title>
+      <description>Maya and Ben trace the story of computing, from Jacquard's punched-card loom to the phone in your pocket.</description>
+      <enclosure url="https://podcast.lpworx.com/audio/how-computers-work-2026-10-09-24cf859b.mp3" length="8860837" type="audio/mpeg"/>
+      <guid isPermaLink="false">ep-8e620c57-463a-4881-a933-51abe3f22020</guid>
+      <pubDate>Fri, 09 Oct 2026 11:55:00 -0600</pubDate>
+      <itunes:duration>1107</itunes:duration>
+    </item>
+    <item>
+      <title>Always-On Agents: Running Your Own Agent Team</title>
+      <description>Maya and Devon dig into the week's big shift: always-on coworker agents from Google, OpenAI, and Microsoft, plus the practical playbook for running your own team of agents — job descriptions, planner-executor-reviewer, and specialist tools like REA.</description>
+      <enclosure url="https://podcast.lpworx.com/audio/always-on-agents-running-your-own-agent-team-2026-10-09.mp3" length="5635621" type="audio/mpeg"/>
+      <guid isPermaLink="false">ep-30585fda-d606-4e7d-97a4-4a6a0bbcc1ef</guid>
+      <pubDate>Fri, 09 Oct 2026 11:54:00 -0600</pubDate>
+      <itunes:duration>704</itunes:duration>
+    </item>
+  </channel>
+</rss>

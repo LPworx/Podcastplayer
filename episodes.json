@@ -1,7 +1,7 @@
 {
   "shows": [
-    { "id": "news", "name": "LP News", "color": "#C41E1E", "colorDark": "#F0625F" },
-    { "id": "learning", "name": "LP Learning", "color": "#7F1EC4", "colorDark": "#B587F0" }
+    { "id": "news", "name": "LP News", "color": "#C41E1E", "colorDark": "#F0625F", "description": "AI and tech news briefings, made for Luke with Muse." },
+    { "id": "learning", "name": "LP Learning", "color": "#7F1EC4", "colorDark": "#B587F0", "description": "AI explainers, how-tos, tech history and short fiction, made for Luke with Muse." }
   ],
   "episodes": [
     { "title": "Open Models, Real Limits", "show": "news", "date": "2026-10-16", "secs": 578, "url": "audio/open-models-real-limits-2026-10-16.mp3" },

@@ -1,0 +1,30 @@
+name: Build show feeds
+
+# Rebuilds news.xml and learning.xml whenever episodes are added or edited by hand.
+on:
+  push:
+    branches: [main]
+    paths: ["episodes.json", "audio/**", "cover-*.png", "scripts/build_feeds.py"]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-muse
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/build_feeds.py
+      - name: Commit and push if a feed changed
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then echo "Feeds already up to date."; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A *.xml
+          git commit -m "Rebuild show feeds"
+          git push

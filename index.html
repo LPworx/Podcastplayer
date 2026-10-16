@@ -134,6 +134,8 @@
   .show-top .mark { width:38px; height:38px; color:var(--show); flex-shrink:0; }
   .show-name { font-family:var(--display); font-weight:800; font-size:25px; line-height:1.1; letter-spacing:-0.02em; margin:0; }
   .show-count { color:var(--muted); font-size:13.5px; }
+  .feed-row { display:flex; align-items:center; gap:10px; margin:10px 0 0 54px; }
+  .feed-row .note { margin:0; }
   #showView .mini .pr { stroke:var(--show); }
   #showView .mini .glyph { color:var(--show); }
   #showView .ep.played .mini .tr { stroke:var(--show); fill:var(--show); }
@@ -212,6 +214,9 @@
     <span id="showMark"></span>
     <div><h1 class="show-name" id="showName"></h1><div class="show-count" id="showCount"></div></div>
   </header>
+  <div class="feed-row"><button class="chip" id="copyFeed">Copy feed link</button><span class="note" id="copyNote" aria-live="polite"></span></div>
+  <header hidden>
+  </header>
   <section id="feedSection">
     <div id="feedList"><p class="empty">Loading episodes&hellip;</p></div>
   </section>
@@ -222,7 +227,7 @@
   </details>
 </div>
 
-  <footer>LP&rsquo;s Podcast v1.8 &middot; podcast.lpworx.com</footer>
+  <footer>LP&rsquo;s Podcast v1.9 &middot; podcast.lpworx.com</footer>
 </div>
 <div class="bar-mini" id="miniBar" aria-hidden="true">
   <span class="track" id="miniTrack"></span>
@@ -633,12 +638,19 @@ function route() {
     themeEl($("showView"), sh);
     $("showMark").innerHTML = markSvg(); $("showName").textContent = sh.name;
     document.title = sh.name;
+    $("copyNote").textContent = "";
     renderFeed(); updateCounts();
   } else { document.title = "LP's Podcast"; updateCounts(); }
   window.scrollTo(0, 0);
   paintMini();
 }
 window.addEventListener("hashchange", route);
+$("copyFeed").addEventListener("click", async () => {
+  const url = location.origin + "/" + view + ".xml";
+  let ok = false;
+  try { await navigator.clipboard.writeText(url); ok = true; } catch (e) { /* clipboard blocked */ }
+  $("copyNote").textContent = ok ? "Copied. Paste it into your podcast app." : url;
+});
 $("backBtn").addEventListener("click", () => {
   if (cameFromHome) { cameFromHome = false; history.back(); }
   else { history.replaceState(null, "", location.pathname + location.search); route(); }
