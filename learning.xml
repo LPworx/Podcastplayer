@@ -13,11 +13,19 @@
     <itunes:explicit>false</itunes:explicit>
     <itunes:block>Yes</itunes:block>
     <item>
+      <title>Your Cloudflare Cabinet: The Four Things Worth Knowing</title>
+      <description>Decoding the Cloudflare dashboard you clicked through: accounts, members, zones, the four settings worth knowing, and a four-step checklist that changes nothing.</description>
+      <enclosure url="https://podcast.lpworx.com/audio/your-cloudflare-cabinet-the-four-things-worth-knowing-2026-10-17.mp3" length="3614973" type="audio/mpeg"/>
+      <guid isPermaLink="false">audio/your-cloudflare-cabinet-the-four-things-worth-knowing-2026-10-17.mp3</guid>
+      <pubDate>Sat, 17 Oct 2026 12:00:00 -0600</pubDate>
+      <itunes:duration>452</itunes:duration>
+    </item>
+    <item>
       <title>Who Answers When Someone Types Your Domain</title>
       <description>A jargon-free walk through what a domain name is, how DNS works like the contacts app on your phone, and what it meant when you changed your nameservers to Cloudflare.</description>
       <enclosure url="https://podcast.lpworx.com/audio/who-answers-when-someone-types-your-domain-2026-10-17.mp3" length="3584879" type="audio/mpeg"/>
       <guid isPermaLink="false">audio/who-answers-when-someone-types-your-domain-2026-10-17.mp3</guid>
-      <pubDate>Sat, 17 Oct 2026 12:00:00 -0600</pubDate>
+      <pubDate>Sat, 17 Oct 2026 11:59:00 -0600</pubDate>
       <itunes:duration>448</itunes:duration>
     </item>
     <item>
@@ -25,7 +33,7 @@
       <description>Everything it takes to get a vibe-coded app onto Google Play in 2026, from the $25 developer account and the twelve-tester closed test to app bundles, signing keys, and the PWA shortcut. Plus a newer free option for sharing apps with just friends and family.</description>
       <enclosure url="https://podcast.lpworx.com/audio/twelve-testers-and-a-signing-key-2026-10-17.mp3" length="5320664" type="audio/mpeg"/>
       <guid isPermaLink="false">audio/twelve-testers-and-a-signing-key-2026-10-17.mp3</guid>
-      <pubDate>Sat, 17 Oct 2026 11:59:00 -0600</pubDate>
+      <pubDate>Sat, 17 Oct 2026 11:58:00 -0600</pubDate>
       <itunes:duration>665</itunes:duration>
     </item>
     <item>
@@ -33,7 +41,7 @@
       <description>What Cloudflare actually is, what happened when the setup wizard had you make an account, a team, and nameserver changes, and which parts of your dashboard matter versus which you can safely ignore. DNS records, proxying, free SSL, Pages, Workers, and R2, in plain English with a little ledger humor.</description>
       <enclosure url="https://podcast.lpworx.com/audio/your-domain-is-a-ledger-dns-and-cloudflare-finally-explained-2026-10-17.mp3" length="5329232" type="audio/mpeg"/>
       <guid isPermaLink="false">audio/your-domain-is-a-ledger-dns-and-cloudflare-finally-explained-2026-10-17.mp3</guid>
-      <pubDate>Sat, 17 Oct 2026 11:58:00 -0600</pubDate>
+      <pubDate>Sat, 17 Oct 2026 11:57:00 -0600</pubDate>
       <itunes:duration>666</itunes:duration>
     </item>
     <item>
@@ -41,7 +49,7 @@
       <description>What GitHub actually is and how people use it, from commits and branches to pull requests, Actions and Pages, plus where AI coding tools fit.</description>
       <enclosure url="https://podcast.lpworx.com/audio/git-github-and-the-undo-button-2026-10-16.mp3" length="4682649" type="audio/mpeg"/>
       <guid isPermaLink="false">audio/git-github-and-the-undo-button-2026-10-16.mp3</guid>
-      <pubDate>Fri, 16 Oct 2026 11:57:00 -0600</pubDate>
+      <pubDate>Fri, 16 Oct 2026 11:56:00 -0600</pubDate>
       <itunes:duration>585</itunes:duration>
     </item>
     <item>
@@ -49,7 +57,7 @@
       <description>Maya and Devon on what you can actually build with AI — fun personal projects, tiny subscription tools, automation services, and digital products — plus the honest math on what each path pays.</description>
       <enclosure url="https://podcast.lpworx.com/audio/build-it-sell-it-cool-things-to-make-with-ai-and-how-they-pay-2026-10-15.mp3" length="4552165" type="audio/mpeg"/>
       <guid isPermaLink="false">ep-de971d6c-3f21-4c9a-a280-e72f1ca9ac06</guid>
-      <pubDate>Thu, 15 Oct 2026 11:56:00 -0600</pubDate>
+      <pubDate>Thu, 15 Oct 2026 11:55:00 -0600</pubDate>
       <itunes:duration>569</itunes:duration>
     </item>
     <item>
@@ -57,7 +65,7 @@
       <description>Maya and Devon on AI's shift from prose to verifiable outputs — Claude Dashboards with readable queries, OpenAI's Decisions API returning typed verdicts, and the thousand-agent bug hunt — with practical plays for NetSuite builders and auditors.</description>
       <enclosure url="https://podcast.lpworx.com/audio/beyond-the-chatbox-dashboards-decisions-and-the-thousand-agent-test-2026-10-14.mp3" length="5559397" type="audio/mpeg"/>
       <guid isPermaLink="false">ep-dcfa6ad5-cdba-4943-8db7-b8951839bed1</guid>
-      <pubDate>Wed, 14 Oct 2026 11:55:00 -0600</pubDate>
+      <pubDate>Wed, 14 Oct 2026 11:54:00 -0600</pubDate>
       <itunes:duration>694</itunes:duration>
     </item>
     <item>
@@ -65,7 +73,7 @@
       <description>Maya and Devon dig into running AI models on your own machine — Ollama, open weights, what fits on real hardware, this week's local AI news, and a privacy-first playbook for sensitive work.</description>
       <enclosure url="https://podcast.lpworx.com/audio/your-own-private-ai-the-local-model-playbook-2026-10-12.mp3" length="5189989" type="audio/mpeg"/>
       <guid isPermaLink="false">ep-9b938250-2654-4947-8883-ff49a56b1e87</guid>
-      <pubDate>Mon, 12 Oct 2026 11:54:00 -0600</pubDate>
+      <pubDate>Mon, 12 Oct 2026 11:53:00 -0600</pubDate>
       <itunes:duration>648</itunes:duration>
     </item>
     <item>
@@ -73,7 +81,7 @@
       <description>A special episode all about Muse — Meta's personal AI agent. Maya and Devon tour what it can really do, what people use it for, what it costs, and how to get the most out of it.</description>
       <enclosure url="https://podcast.lpworx.com/audio/meet-muse-what-your-personal-ai-agent-can-actually-do-2026-10-09.mp3" length="4584229" type="audio/mpeg"/>
       <guid isPermaLink="false">ep-000e2b98-eb8f-4e21-a418-25ca07691a8f</guid>
-      <pubDate>Fri, 09 Oct 2026 11:53:00 -0600</pubDate>
+      <pubDate>Fri, 09 Oct 2026 11:52:00 -0600</pubDate>
       <itunes:duration>573</itunes:duration>
     </item>
     <item>
@@ -81,7 +89,7 @@
       <description>An original short story in the spirit of Steven L. Peck's A Short Stay in Hell. Tom Ellery wakes in an afterlife that seems... nice. Too nice. Narrated fiction.</description>
       <enclosure url="https://podcast.lpworx.com/audio/the-pleasant-place-2026-10-09-0e5647cb.mp3" length="4840549" type="audio/mpeg"/>
       <guid isPermaLink="false">ep-69771c12-3cb6-4471-adca-157b8b828bc6</guid>
-      <pubDate>Fri, 09 Oct 2026 11:52:00 -0600</pubDate>
+      <pubDate>Fri, 09 Oct 2026 11:51:00 -0600</pubDate>
       <itunes:duration>605</itunes:duration>
     </item>
     <item>
@@ -89,7 +97,7 @@
       <description>Maya and Ben trace the story of computing, from Jacquard's punched-card loom to the phone in your pocket.</description>
       <enclosure url="https://podcast.lpworx.com/audio/how-computers-work-2026-10-09-24cf859b.mp3" length="8860837" type="audio/mpeg"/>
       <guid isPermaLink="false">ep-8e620c57-463a-4881-a933-51abe3f22020</guid>
-      <pubDate>Fri, 09 Oct 2026 11:51:00 -0600</pubDate>
+      <pubDate>Fri, 09 Oct 2026 11:50:00 -0600</pubDate>
       <itunes:duration>1107</itunes:duration>
     </item>
     <item>
@@ -97,7 +105,7 @@
       <description>Maya and Devon dig into the week's big shift: always-on coworker agents from Google, OpenAI, and Microsoft, plus the practical playbook for running your own team of agents — job descriptions, planner-executor-reviewer, and specialist tools like REA.</description>
       <enclosure url="https://podcast.lpworx.com/audio/always-on-agents-running-your-own-agent-team-2026-10-09.mp3" length="5635621" type="audio/mpeg"/>
       <guid isPermaLink="false">ep-30585fda-d606-4e7d-97a4-4a6a0bbcc1ef</guid>
-      <pubDate>Fri, 09 Oct 2026 11:50:00 -0600</pubDate>
+      <pubDate>Fri, 09 Oct 2026 11:49:00 -0600</pubDate>
       <itunes:duration>704</itunes:duration>
     </item>
   </channel>
