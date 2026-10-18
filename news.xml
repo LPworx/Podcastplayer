@@ -13,11 +13,19 @@
     <itunes:explicit>false</itunes:explicit>
     <itunes:block>Yes</itunes:block>
     <item>
+      <title>Better, Faster, Same Price</title>
+      <description>DeepSeek ships a stronger model at the same price, Lean gets verified kernels, and Let's Encrypt shrinks certificates to 64 days. Plus Tencent's memory model and a tool for estimating local AI speed.</description>
+      <enclosure url="https://podcast.lpworx.com/audio/better-faster-same-price-2026-10-18.mp3" length="4619537" type="audio/mpeg"/>
+      <guid isPermaLink="false">audio/better-faster-same-price-2026-10-18.mp3</guid>
+      <pubDate>Sun, 18 Oct 2026 12:00:00 -0600</pubDate>
+      <itunes:duration>577</itunes:duration>
+    </item>
+    <item>
       <title>Just Timestamps</title>
       <description>Anthropic's model solves the 25-year-old NIST ECDSA seed mystery, a critical GitLab emergency patch, FLUX 3 Klein open weights, Mercor's map of what AI benchmarks miss, and Google Play's private vibe-coded apps.</description>
       <enclosure url="https://podcast.lpworx.com/audio/just-timestamps-2026-10-17.mp3" length="5005941" type="audio/mpeg"/>
       <guid isPermaLink="false">audio/just-timestamps-2026-10-17.mp3</guid>
-      <pubDate>Sat, 17 Oct 2026 12:00:00 -0600</pubDate>
+      <pubDate>Sat, 17 Oct 2026 11:59:00 -0600</pubDate>
       <itunes:duration>626</itunes:duration>
     </item>
     <item>
@@ -25,7 +33,7 @@
       <description>Open Models, Real Limits</description>
       <enclosure url="https://podcast.lpworx.com/audio/open-models-real-limits-2026-10-16.mp3" length="4623597" type="audio/mpeg"/>
       <guid isPermaLink="false">audio/open-models-real-limits-2026-10-16.mp3</guid>
-      <pubDate>Fri, 16 Oct 2026 11:59:00 -0600</pubDate>
+      <pubDate>Fri, 16 Oct 2026 11:58:00 -0600</pubDate>
       <itunes:duration>578</itunes:duration>
     </item>
     <item>
@@ -33,7 +41,7 @@
       <description>Tech Briefing October 15: Original Audio</description>
       <enclosure url="https://podcast.lpworx.com/audio/tech-briefing-october-15-original-audio.ogg" length="3018835" type="audio/ogg"/>
       <guid isPermaLink="false">audio/tech-briefing-october-15-original-audio.ogg</guid>
-      <pubDate>Thu, 15 Oct 2026 11:58:00 -0600</pubDate>
+      <pubDate>Thu, 15 Oct 2026 11:57:00 -0600</pubDate>
       <itunes:duration>510</itunes:duration>
     </item>
     <item>
@@ -41,7 +49,7 @@
       <description>Maya and Devon on October 15 news - Figma Specs, Anthropic Scion, eight-state OpenAI lawsuits, Apertus 1.5, TSMC earnings, and YouTube Music AI labels - with builder takeaways.</description>
       <enclosure url="https://podcast.lpworx.com/audio/tech-briefing-october-15-specs-scion-lawsuits-apertus-tsmc-and-ai-music-labels-2026-10-15.mp3" length="3984613" type="audio/mpeg"/>
       <guid isPermaLink="false">ep-a05f593a-0f1a-4c13-86f4-6697b0cb4cfd</guid>
-      <pubDate>Thu, 15 Oct 2026 11:57:00 -0600</pubDate>
+      <pubDate>Thu, 15 Oct 2026 11:56:00 -0600</pubDate>
       <itunes:duration>498</itunes:duration>
     </item>
     <item>
@@ -49,7 +57,7 @@
       <description>Maya and Ben separate fact from hype on AI risks — cybercrime at scale, deepfakes, job displacement numbers, and the fears worth having.</description>
       <enclosure url="https://podcast.lpworx.com/audio/the-real-ai-fears-whats-actually-scary-right-now-2026-10-11.mp3" length="4325797" type="audio/mpeg"/>
       <guid isPermaLink="false">ep-85b17488-9edb-429f-b0ec-49ed4effd76b</guid>
-      <pubDate>Sun, 11 Oct 2026 11:56:00 -0600</pubDate>
+      <pubDate>Sun, 11 Oct 2026 11:55:00 -0600</pubDate>
       <itunes:duration>540</itunes:duration>
     </item>
     <item>
@@ -57,7 +65,7 @@
       <description>A quick hello from the new home of the AI in Practice series, short fiction, and tech histories.</description>
       <enclosure url="https://podcast.lpworx.com/audio/welcome-to-lps-podcast-2026-10-09.mp3" length="196261" type="audio/mpeg"/>
       <guid isPermaLink="false">ep-01b1dd6d-1da3-4287-bbac-c507246da6a6</guid>
-      <pubDate>Fri, 09 Oct 2026 11:55:00 -0600</pubDate>
+      <pubDate>Fri, 09 Oct 2026 11:54:00 -0600</pubDate>
       <itunes:duration>24</itunes:duration>
     </item>
     <item>
@@ -65,7 +73,7 @@
       <description>Maya and Devon break down Anthropic's huge early-October 2026 release wave — Haiku 5.5, halved cache pricing, Claude Code mods — plus the planner-executor-reviewer playbook and what a working builder should do differently on Monday.</description>
       <enclosure url="https://podcast.lpworx.com/audio/claudes-big-week-haiku-55-cheaper-caching-and-the-agent-swarm-2026-10-09.mp3" length="6486565" type="audio/mpeg"/>
       <guid isPermaLink="false">ep-9357eafc-c3b7-4760-83c5-feec2535e132</guid>
-      <pubDate>Fri, 09 Oct 2026 11:54:00 -0600</pubDate>
+      <pubDate>Fri, 09 Oct 2026 11:53:00 -0600</pubDate>
       <itunes:duration>810</itunes:duration>
     </item>
   </channel>
